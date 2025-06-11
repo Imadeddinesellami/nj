@@ -5,86 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة النجوم</title>
     <!-- External Libraries -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
     <style>
         /* General Styles */
-        body { font-family: Arial, sans-serif; margin: 0; }
+        body { font-family: 'Tajawal', sans-serif; margin: 0; background-color: #f0f4f8; }
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
         #welcome-page { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
             height: 100vh; 
-            background-color: #f8f9fa; 
+            background: linear-gradient(135deg, #e0f7fa, #fff); 
             overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         #logo-container { 
             width: 100%; 
-            max-width: 300px; 
-            height: 300px; 
-            margin-bottom: 20px; 
+            max-width: 350px; 
+            height: 350px; 
+            margin-bottom: 30px; 
+            border: 2px solid #007bff;
+            border-radius: 10px;
         }
         #welcome-text { 
-            font-size: 2rem; 
-            color: #333; 
+            font-size: 2.5rem; 
+            color: #007bff; 
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            font-weight: 700;
         }
         .typing { 
             display: inline-block; 
             white-space: nowrap; 
             overflow: hidden; 
-            border-right: 3px solid; 
+            border-right: 4px solid #007bff; 
             animation: blink 0.75s step-end infinite; 
         }
         #start-button {
-            padding: 15px 30px; 
-            font-size: 1.2rem;
+            padding: 15px 40px;
+            font-size: 1.3rem;
             background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
         }
         #start-button:hover {
             background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
         }
         #main-page, #admin-page { 
             display: none; 
-            padding: 20px; 
+            padding: 30px; 
+            background-color: white; 
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: 20px;
         }
         .admin-icon { 
             position: fixed; 
             top: 20px; 
             left: 20px; 
             cursor: pointer; 
-            width: 30px; 
+            width: 40px; 
+            transition: transform 0.3s;
         }
-        .modal-body { 
-            text-align: right; 
-        }
-        table { 
-            margin-top: 20px; 
-        }
+        .admin-icon:hover { transform: scale(1.1); }
+        .modal-body { text-align: right; }
+        table { margin-top: 20px; background-color: #f8f9fa; border-radius: 10px; }
+        table th { background-color: #007bff; color: white; }
+        table td { vertical-align: middle; }
         /* Animations */
-        @keyframes blink { 
-            50% { border-color: transparent; } 
-        }
+        @keyframes blink { 50% { border-color: transparent; } }
         /* Responsive Design */
         @media (max-width: 768px) {
+            #logo-container { max-width: 250px; height: 250px; }
+            #welcome-text { font-size: 2rem; }
+            #start-button { padding: 12px 30px; font-size: 1.1rem; }
+            #main-page, #admin-page { padding: 15px; margin: 10px; }
+        }
+        @media (max-width: 480px) {
             #logo-container { max-width: 200px; height: 200px; }
             #welcome-text { font-size: 1.5rem; }
             #start-button { padding: 10px 20px; font-size: 1rem; }
-        }
-        @media (max-width: 480px) {
-            #logo-container { max-width: 150px; height: 150px; }
-            #welcome-text { font-size: 1.2rem; }
-            #start-button { padding: 8px 15px; font-size: 0.9rem; }
+            .admin-icon { width: 30px; }
         }
     </style>
 </head>
@@ -98,9 +111,9 @@
 
     <!-- Main Page -->
     <div id="main-page" class="container">
-        <img src="https://via.placeholder.com/30" alt="Admin" class="admin-icon" id="admin-icon">
-        <h2 class="text-center mb-4">إدخال بيانات الطالب</h2>
-        <form id="student-form">
+        <img src="https://via.placeholder.com/40" alt="Admin" class="admin-icon" id="admin-icon">
+        <h2 class="text-center mb-4" style="color: #007bff;">إدخال بيانات الطالب</h2>
+        <form id="student-form" class="p-4 bg-light rounded">
             <div class="mb-3">
                 <label for="student-name" class="form-label">اسم الطالب</label>
                 <input type="text" class="form-control" id="student-name" required>
@@ -117,16 +130,14 @@
                 <label for="notes" class="form-label">ملاحظات (اختياري)</label>
                 <textarea class="form-control" id="notes"></textarea>
             </div>
-            <div class="mb-3">
-                <button type="submit" class="btn btn-primary">حفظ</button>
-            </div>
+            <button type="submit" class="btn btn-primary">حفظ</button>
         </form>
     </div>
 
     <!-- Admin Page -->
     <div id="admin-page" class="container">
-        <h2 class="text-center mb-4">لوحة الإدارة</h2>
-        <table class="table table-bordered">
+        <h2 class="text-center mb-4" style="color: #007bff;">لوحة الإدارة</h2>
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>اسم الطالب</th>
@@ -145,7 +156,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">تسجيل دخول الأدمن</h5>
+                    <h5 class="modal-title" style="color: #007bff;">تسجيل دخول الأدمن</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -158,15 +169,15 @@
                 </div>
             </div>
         </div>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // === Configuration ===
         const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4MywiIn0.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc';
+        const SUPABASE_KEY = 'YOUR_NEW_API_KEY'; // استبدل هذا بالمفتاح الجديد من Supabase Dashboard
         const ADMIN_PASSWORD = '03072002';
-        const GLB_URL = 'https://raw.githubusercontent.com/your-username/your-repo/main/logo.glb'; // استبدل باسم المستخدم واسم المستودع
+        const GLB_URL = 'https://raw.githubusercontent.com/Imadeddinesellami/nj/main/logo.glb';
 
         // === Initialize Supabase ===
         let supabase;
@@ -175,10 +186,11 @@
             console.log('Supabase initialized successfully');
         } catch (error) {
             console.error('Error initializing Supabase:', error.message);
-            alert('فشل تهيئة Supabase. تأكد من اتصال الإنترنت أو مكتبة supabase-js.');
+            alert('فشل تهيئة Supabase. تأكد من مفتاح API الصحيح واتصال الإنترنت.');
         }
 
-        $(document).ready(function() {
+        // === DOM Content Loaded ===
+        document.addEventListener('DOMContentLoaded', function() {
             // Check jQuery
             if (typeof window.jQuery === 'undefined') {
                 console.error('jQuery not loaded');
@@ -188,7 +200,7 @@
             console.log('jQuery loaded successfully');
 
             // === Welcome Page Animation ===
-            const text = 'مرحبًا بكمم في نظام إدارة النجوم';
+            const text = 'مرحبًا بكم في نظام إدارة النجوم';
             let index = 0;
             function type() {
                 if (index < text.length) {
@@ -202,7 +214,7 @@
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ alpha: true });
-            renderer.setSize(300, 300);
+            renderer.setSize(350, 350);
             const logoContainer = document.getElementById('logo-container');
             logoContainer.appendChild(renderer.domElement);
 
@@ -237,15 +249,15 @@
                 (xhr) => console.log('GLB loading: ' + (xhr.loaded / xhr.total * 100) + '%'),
                 (error) => {
                     console.error('Error loading GLB:', error);
-                    alert('فشل تحميل الشعار ثلاثي الأبعاد. تأكد من رابط ملف GLB.');
+                    alert('فشل تحميل الشعار ثلاثي الأبعاد. تأكد من رابط ملف GLB: ' + GLB_URL);
                 }
             );
 
             // Lighting and camera
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
             directionalLight.position.set(5, 5, 5);
             scene.add(directionalLight);
-            scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+            scene.add(new THREE.AmbientLight(0xffffff, 0.8));
             camera.position.set(0, 1, 5);
 
             // === Event Handlers ===
@@ -286,12 +298,13 @@
                 };
 
                 try {
+                    if (!supabase) throw new Error('Supabase not initialized');
                     const { error } = await supabase.from('students').insert([student]);
                     if (error) throw error;
                     document.getElementById('student-form').reset();
                     alert('تم حفظ البيانات بنجاح');
                 } catch (error) {
-                    console.error('Error saving student:', error);
+                    console.error('Error saving student:', error.message);
                     alert('حدث خطأ أثناء الحفظ: ' + error.message);
                 }
             });
@@ -299,6 +312,7 @@
             // Load admin results
             async function loadResults() {
                 try {
+                    if (!supabase) throw new Error('Supabase not initialized');
                     const { data, error } = await supabase.from('students').select('*').order('id', { ascending: true });
                     if (error) throw error;
                     const tableBody = document.getElementById('results-table');
@@ -336,14 +350,14 @@
                                     alert('تم التعديل بنجاح');
                                     loadResults();
                                 } catch (error) {
-                                    console.error('Error editing student:', error);
+                                    console.error('Error editing student:', error.message);
                                     alert('حدث خطأ أثناء التعديل: ' + error.message);
                                 }
                             }
                         });
                     });
                 } catch (error) {
-                    console.error('Error loading results:', error);
+                    console.error('Error loading results:', error.message);
                     alert('حدث خطأ أثناء تحميل البيانات: ' + error.message);
                 }
             }
