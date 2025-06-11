@@ -6,112 +6,74 @@
     <title>نظام إدارة النجوم</title>
     <!-- External Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
     <style>
-        body { font-family: 'Tajawal', sans-serif; margin: 0; transition: all 0.3s; }
+        body { font-family: 'Tajawal', sans-serif; margin: 0; background: linear-gradient(135deg, #e6f0fa, #ffffff); }
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
-        :root {
-            --bg-light: #f0f4f8;
-            --bg-dark: #1a2a44;
-            --text-light: #333;
-            --text-dark: #e0e7ff;
-            --primary: #007bff;
-            --secondary: #0056b3;
-        }
-        body.dark-mode {
-            --bg-light: #1a2a44;
-            --bg-dark: #0d1b2a;
-            --text-light: #e0e7ff;
-            --text-dark: #a3bffa;
-        }
         #welcome-page { 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; background: linear-gradient(135deg, #e0f7fa, #fff); overflow: hidden;
-            border-radius: 20px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            height: 100vh; background: url('https://www.transparenttextures.com/patterns/stardust.png'), linear-gradient(135deg, #e6f0fa, #ffffff); 
+            border-radius: 25px; box-shadow: 0 10px 30px rgba(0, 123, 255, 0.3); overflow: hidden;
         }
         #logo-container { 
-            width: 400px; height: 400px; margin-bottom: 40px; border: 4px solid #007bff;
-            border-radius: 15px; overflow: hidden;
+            width: 450px; height: 450px; margin-bottom: 50px; border: 5px solid #00aaff;
+            border-radius: 20px; overflow: hidden; position: relative; 
         }
-        #welcome-text { font-size: 3rem; color: var(--primary); text-align: center; margin-bottom: 40px; font-weight: 700; }
-        .typing { display: inline-block; white-space: nowrap; overflow: hidden; border-right: 4px solid var(--primary); animation: blink 0.75s step-end infinite; }
-        #start-button { padding: 20px 50px; font-size: 1.5rem; background-color: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4); }
-        #start-button:hover { background-color: var(--secondary); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 123, 255, 0.5); }
-        #main-page, #admin-page { display: none; padding: 40px; background-color: var(--bg-light); border-radius: 20px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); margin: 20px; }
-        .admin-icon { position: fixed; top: 20px; left: 20px; cursor: pointer; width: 50px; transition: transform 0.3s; }
-        .admin-icon:hover { transform: scale(1.2); }
+        #welcome-text { font-size: 3.5rem; color: #00aaff; text-align: center; margin-bottom: 50px; font-weight: 700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); }
+        .typing { display: inline-block; white-space: nowrap; overflow: hidden; border-right: 4px solid #00aaff; animation: blink 0.75s step-end infinite; }
+        #start-button { padding: 25px 60px; font-size: 1.8rem; background-color: #00aaff; color: white; border: none; border-radius: 15px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(0, 170, 255, 0.5); }
+        #start-button:hover { background-color: #0090d0; transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0, 170, 255, 0.6); }
+        #admin-page { display: none; padding: 50px; background-color: #ffffff; border-radius: 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); margin: 20px; }
+        .admin-icon { position: fixed; top: 20px; left: 20px; cursor: pointer; width: 60px; transition: transform 0.3s; }
+        .admin-icon:hover { transform: scale(1.3); }
         .modal-body { text-align: right; }
-        table { margin-top: 20px; background-color: var(--bg-light); border-radius: 15px; }
-        table th { background-color: var(--primary); color: white; }
-        table td { vertical-align: middle; color: var(--text-light); }
-        .dark-mode table { background-color: var(--bg-dark); }
-        .dark-mode table th { background-color: var(--secondary); }
+        table { margin-top: 30px; background-color: #f9fbfd; border-radius: 20px; }
+        table th { background-color: #00aaff; color: white; }
+        table td { vertical-align: middle; color: #333; }
+        #search-bar { width: 100%; max-width: 300px; margin-bottom: 20px; padding: 10px; border: 2px solid #00aaff; border-radius: 10px; }
+        #export-btn { margin-top: 20px; padding: 12px 25px; background-color: #ffd700; color: #333; border: none; border-radius: 10px; cursor: pointer; }
+        #export-btn:hover { background-color: #e6c200; transform: translateY(-2px); }
         @keyframes blink { 50% { border-color: transparent; } }
         @media (max-width: 768px) {
-            #logo-container { width: 300px; height: 300px; }
-            #welcome-text { font-size: 2.2rem; }
-            #start-button { padding: 15px 40px; font-size: 1.2rem; }
-            #main-page, #admin-page { padding: 20px; margin: 10px; }
+            #logo-container { width: 350px; height: 350px; }
+            #welcome-text { font-size: 2.5rem; }
+            #start-button { padding: 15px 40px; font-size: 1.5rem; }
+            #admin-page { padding: 20px; margin: 10px; }
+            .admin-icon { width: 50px; }
         }
         @media (max-width: 480px) {
-            #logo-container { width: 250px; height: 250px; }
-            #welcome-text { font-size: 1.8rem; }
-            #start-button { padding: 12px 30px; font-size: 1rem; }
+            #logo-container { width: 300px; height: 300px; }
+            #welcome-text { font-size: 2rem; }
+            #start-button { padding: 12px 30px; font-size: 1.2rem; }
             .admin-icon { width: 40px; }
+            #search-bar { max-width: 200px; }
         }
-        #theme-toggle { position: fixed; top: 20px; right: 20px; padding: 10px 20px; background-color: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; }
-        #export-btn { margin-top: 20px; padding: 10px 20px; background-color: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <button id="theme-toggle">وضع ليلي</button>
     <div id="welcome-page">
         <div id="logo-container"></div>
         <div id="welcome-text" class="typing"></div>
-        <button id="start-button">إبدأ الآن</button>
-    </div>
-    <div id="main-page" class="container">
-        <img src="https://cdn-icons-png.flaticon.com/512/149/149064.png" alt="Admin" class="admin-icon" id="admin-icon">
-        <h2 class="text-center mb-4" style="color: var(--primary);">إدخال بيانات الطالب</h2>
-        <form id="student-form" class="p-4 bg-light rounded">
-            <div class="mb-3">
-                <label for="student-name" class="form-label">اسم الطالب</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="student-name" required>
-                    <button type="button" class="btn btn-secondary" id="edit-name-btn" style="display: none;">تعديل</button>
-                </div>
-            </div>
-            <div class="mb-3">
-                <label for="gold-stars" class="form-label">عدد النجوم الذهبية</label>
-                <input type="number" class="form-control" id="gold-stars" min="0">
-            </div>
-            <div class="mb-3">
-                <label for="silver-stars" class="form-label">عدد النجوم الفضية</label>
-                <input type="number" class="form-control" id="silver-stars" min="0">
-            </div>
-            <div class="mb-3">
-                <label for="notes" class="form-label">ملاحظات (اختياري)</label>
-                <textarea class="form-control" id="notes"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">حفظ</button>
-        </form>
+        <button id="start-button">إبدأ الآن <i class="fas fa-play"></i></button>
     </div>
     <div id="admin-page" class="container">
-        <h2 class="text-center mb-4" style="color: var(--primary);">لوحة الإدارة</h2>
-        <button id="export-btn">تصدير إلى Excel</button>
+        <h2 class="text-center mb-5" style="color: #00aaff;">لوحة الإدارة <i class="fas fa-star"></i></h2>
+        <input type="text" id="search-bar" placeholder="ابحث باسم الطالب..." class="form-control">
+        <button id="export-btn">تصدير إلى Excel <i class="fas fa-file-export"></i></button>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>اسم الطالب</th>
-                    <th>النجوم الذهبية</th>
-                    <th>النجوم الفضية</th>
-                    <th>ملاحظات</th>
-                    <th>تاريخ/وقت</th>
-                    <th>تعديل</th>
+                    <th>اسم الطالب <i class="fas fa-sort-alpha-down"></i></th>
+                    <th>النجوم الذهبية <i class="fas fa-star"></i></th>
+                    <th>النجوم الفضية <i class="fas fa-star-half-alt"></i></th>
+                    <th>ملاحظات <i class="fas fa-sticky-note"></i></th>
+                    <th>تاريخ/وقت <i class="fas fa-clock"></i></th>
+                    <th>تعديل <i class="fas fa-edit"></i></th>
                 </tr>
             </thead>
             <tbody id="results-table"></tbody>
@@ -121,7 +83,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" style="color: var(--primary);">تسجيل دخول الأدمن</h5>
+                    <h5 class="modal-title" style="color: #00aaff;">تسجيل دخول الأدمن <i class="fas fa-lock"></i></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -130,11 +92,12 @@
                     <div id="error-message" class="text-danger mt-2"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="submit-password">تأكيد</button>
+                    <button type="button" class="btn btn-primary" id="submit-password">تأكيد <i class="fas fa-check"></i></button>
                 </div>
             </div>
         </div>
     </div>
+    <img src="https://cdn-icons-png.flaticon.com/512/147/147144.png" alt="Admin" class="admin-icon" id="admin-icon">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // === Configuration ===
@@ -162,13 +125,6 @@
             }
             console.log('jQuery loaded successfully');
 
-            // === Theme Toggle ===
-            const themeToggle = document.getElementById('theme-toggle');
-            themeToggle.addEventListener('click', function() {
-                document.body.classList.toggle('dark-mode');
-                this.textContent = document.body.classList.contains('dark-mode') ? 'وضع نهاري' : 'وضع ليلي';
-            });
-
             // === Welcome Page Animation ===
             const text = 'مرحبًا بكم في نظام إدارة النجوم';
             let index = 0;
@@ -183,8 +139,8 @@
             // === Three.js for GLB Logo ===
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true });
-            renderer.setSize(400, 400);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(450, 450);
             const logoContainer = document.getElementById('logo-container');
             logoContainer.appendChild(renderer.domElement);
 
@@ -205,7 +161,7 @@
                     const model = gltf.scene;
                     scene.add(model);
                     model.rotation.y = Math.PI / 4;
-                    model.scale.set(4, 4, 4);
+                    model.scale.set(5, 5, 5); // زيادة الحجم لتحسين الوضوح
                     function animate() {
                         requestAnimationFrame(animate);
                         model.rotation.y += 0.01;
@@ -221,16 +177,16 @@
                 }
             );
 
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
             directionalLight.position.set(5, 5, 5);
             scene.add(directionalLight);
-            scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-            camera.position.set(0, 2, 6);
+            scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+            camera.position.set(0, 2, 7);
 
             // === Event Handlers ===
             document.getElementById('start-button').addEventListener('click', function() {
                 document.getElementById('welcome-page').style.display = 'none';
-                document.getElementById('main-page').style.display = 'block';
+                document.getElementById('admin-page').style.display = 'block';
             });
 
             let adminModalInstance = null;
@@ -243,55 +199,8 @@
                 const password = document.getElementById('admin-password').value;
                 if (password === ADMIN_PASSWORD) {
                     if (adminModalInstance) adminModalInstance.hide();
-                    document.getElementById('main-page').style.display = 'none';
-                    document.getElementById('admin-page').style.display = 'block';
                     loadResults();
                 } else document.getElementById('error-message').innerText = 'كلمة المرور غير صحيحة';
-            });
-
-            const studentForm = document.getElementById('student-form');
-            studentForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const student = {
-                    name: document.getElementById('student-name').value,
-                    gold_stars: parseInt(document.getElementById('gold-stars').value) || 0,
-                    silver_stars: parseInt(document.getElementById('silver-stars').value) || 0,
-                    notes: document.getElementById('notes').value || null,
-                    created_at: new Date().toISOString() // استخدام تنسيق ISO
-                };
-                try {
-                    if (!supabase) throw new Error('Supabase not initialized');
-                    const { error } = await supabase.from('students').insert([student]);
-                    if (error) throw error;
-                    studentForm.reset();
-                    alert('تم حفظ البيانات بنجاح');
-                    document.getElementById('edit-name-btn').style.display = 'none';
-                } catch (error) {
-                    console.error('Error saving student:', error.message);
-                    alert('حدث خطأ أثناء الحفظ: ' + error.message);
-                }
-            });
-
-            document.getElementById('edit-name-btn').addEventListener('click', async function() {
-                const newName = prompt('أدخل الاسم الجديد:', document.getElementById('student-name').value);
-                if (newName) {
-                    try {
-                        const { error } = await supabase
-                            .from('students')
-                            .update({ name: newName })
-                            .eq('name', document.getElementById('student-name').value);
-                        if (error) throw error;
-                        document.getElementById('student-name').value = newName;
-                        alert('تم تعديل الاسم بنجاح');
-                    } catch (error) {
-                        console.error('Error editing name:', error.message);
-                        alert('حدث خطأ أثناء تعديل الاسم: ' + error.message);
-                    }
-                }
-            });
-
-            document.getElementById('student-name').addEventListener('input', function() {
-                document.getElementById('edit-name-btn').style.display = this.value ? 'inline-block' : 'none';
             });
 
             async function loadResults() {
@@ -317,7 +226,7 @@
                             <td>${student.silver_stars}</td>
                             <td>${student.notes || ''}</td>
                             <td>${new Date(student.created_at).toLocaleString('ar-EG', { timeZone: 'CET' }) || ''}</td>
-                            <td><button class="btn btn-warning btn-sm edit-btn" data-id="${student.id}">تعديل</button></td>
+                            <td><button class="btn btn-warning btn-sm edit-btn" data-id="${student.id}">تعديل <i class="fas fa-edit"></i></button></td>
                         `;
                         tableBody.appendChild(row);
                     });
@@ -357,12 +266,25 @@
             }
 
             document.getElementById('export-btn').addEventListener('click', function() {
-                const table = document.querySelector('table');
+                const table = document.getElementById('results-table');
                 if (table) {
-                    table2excel('results-table', 'Students Data');
+                    let tableHTML = table.outerHTML;
+                    tableHTML = tableHTML.replace(/<tbody>/i, '<tbody id="export-table">');
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = tableHTML;
+                    TableToExcel.convert(tempDiv.querySelector('#export-table'), { name: 'Students Data.xlsx' });
                 } else {
                     alert('لا يوجد جدول للتصدير');
                 }
+            });
+
+            document.getElementById('search-bar').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#results-table tr');
+                rows.forEach(row => {
+                    const name = row.cells[0].textContent.toLowerCase();
+                    row.style.display = name.includes(searchTerm) ? '' : 'none';
+                });
             });
         });
     </script>
