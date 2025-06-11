@@ -23,20 +23,23 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
+      text-align: center;
+      padding: 20px;
     }
     #logo-container {
-      width: 400px;
-      height: 400px;
+      width: 100%;
+      max-width: 300px;
+      height: 300px;
       margin-bottom: 30px;
     }
     #welcome-text {
-      font-size: 2.5rem;
+      font-size: 2rem;
       color: #004085;
       font-weight: bold;
     }
     #start-button {
       padding: 12px 35px;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       border: none;
       border-radius: 10px;
       background-color: #004085;
@@ -50,14 +53,14 @@
       top: 15px;
       left: 15px;
       cursor: pointer;
-      width: 50px;
+      width: 40px;
     }
     #admin-page {
       display: none;
-      padding: 40px;
+      padding: 20px;
     }
     table {
-      margin-top: 30px;
+      margin-top: 20px;
       background: #fff;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -73,6 +76,7 @@
       margin-bottom: 20px;
     }
     #add-form input, #add-form button {
+      flex: 1 1 150px;
       padding: 10px;
       border-radius: 8px;
       border: 1px solid #ccc;
@@ -84,6 +88,7 @@
       border-radius: 8px;
       color: #000;
       margin-top: 10px;
+      display: none;
     }
     #search-input {
       margin-bottom: 15px;
@@ -91,6 +96,14 @@
       border-radius: 8px;
       border: 1px solid #ccc;
       width: 100%;
+    }
+    @media (max-width: 600px) {
+      #add-form input, #add-form button {
+        flex: 1 1 100%;
+      }
+      th, td {
+        font-size: 0.85rem;
+      }
     }
   </style>
 </head>
@@ -146,13 +159,15 @@
   </div>
   <script>
     const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc';
+    const SUPABASE_KEY = 'eyJ...'; // تم تقصيره للأمان
     const ADMIN_PASSWORD = '03072002';
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    let isAdminMode = false;
     const welcomePage = document.getElementById('welcome-page');
     const adminPage = document.getElementById('admin-page');
     const tableBody = document.getElementById('results-table');
+    const exportBtn = document.getElementById('export-btn');
 
     document.getElementById('start-button').onclick = () => {
       welcomePage.style.display = 'none';
@@ -167,6 +182,9 @@
       const pass = document.getElementById('admin-password').value;
       if (pass === ADMIN_PASSWORD) {
         modal.hide();
+        isAdminMode = true;
+        exportBtn.style.display = 'inline-block';
+        document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
         loadData(true);
       } else {
         document.getElementById('error-message').textContent = 'كلمة المرور غير صحيحة';
@@ -185,14 +203,15 @@
           <td>${item.silver_stars}</td>
           <td>${item.notes || ''}</td>
           <td>${new Date(item.created_at).toLocaleString('ar-EG')}</td>
-          ${isAdmin ? `<td><button class="btn btn-warning btn-sm" onclick="editStudent(${item.id})">تعديل</button></td>` : '<td>-</td>'}
-          ${isAdmin ? `<td><button class="btn btn-danger btn-sm" onclick="deleteStudent(${item.id})">حذف</button></td>` : '<td>-</td>'}
+          ${isAdmin ? `<td><button class="btn btn-warning btn-sm" onclick="editStudent(${item.id})">تعديل</button></td>` : '<td class="admin-only" style="display:none">-</td>'}
+          ${isAdmin ? `<td><button class="btn btn-danger btn-sm" onclick="deleteStudent(${item.id})">حذف</button></td>` : '<td class="admin-only" style="display:none">-</td>'}
         `;
         tableBody.appendChild(row);
       });
     }
 
     window.deleteStudent = async function(id) {
+      if (!isAdminMode) return;
       if (confirm('هل تريد حذف هذا الطالب؟')) {
         await client.from('students').delete().eq('id', id);
         loadData(true);
@@ -200,6 +219,7 @@
     };
 
     window.editStudent = async function(id) {
+      if (!isAdminMode) return;
       const name = prompt('اسم جديد؟');
       const gold = prompt('عدد النجوم الذهبية؟');
       const silver = prompt('عدد النجوم الفضية؟');
@@ -226,10 +246,10 @@
         notes
       });
       e.target.reset();
-      loadData(true);
+      loadData(isAdminMode);
     };
 
-    document.getElementById('export-btn').onclick = () => {
+    exportBtn.onclick = () => {
       const rows = [['اسم الطالب', 'ذهب', 'فضة', 'ملاحظات', 'تاريخ']];
       document.querySelectorAll('#results-table tr').forEach(tr => {
         const cells = [...tr.children];
@@ -253,7 +273,7 @@
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ alpha: true });
-    renderer.setSize(400, 400);
+    renderer.setSize(300, 300);
     document.getElementById('logo-container').appendChild(renderer.domElement);
     const loader = new THREE.GLTFLoader();
     loader.load('https://raw.githubusercontent.com/Imadeddinesellami/nj/main/logo.glb', gltf => {
