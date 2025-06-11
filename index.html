@@ -111,7 +111,7 @@
 
     <!-- Main Page -->
     <div id="main-page" class="container">
-        <img src="https://via.placeholder.com/40" alt="Admin" class="admin-icon" id="admin-icon">
+        <img src="https://cdn-icons-png.flaticon.com/512/1946/1946436.png" alt="Admin" class="admin-icon" id="admin-icon">
         <h2 class="text-center mb-4" style="color: #007bff;">إدخال بيانات الطالب</h2>
         <form id="student-form" class="p-4 bg-light rounded">
             <div class="mb-3">
@@ -120,11 +120,11 @@
             </div>
             <div class="mb-3">
                 <label for="gold-stars" class="form-label">عدد النجوم الذهبية</label>
-                <input type="number" class="form-control" id="gold-stars" min="0" required>
+                <input type="number" class="form-control" id="gold-stars" min="0">
             </div>
             <div class="mb-3">
                 <label for="silver-stars" class="form-label">عدد النجوم الفضية</label>
-                <input type="number" class="form-control" id="silver-stars" min="0" required>
+                <input type="number" class="form-control" id="silver-stars" min="0">
             </div>
             <div class="mb-3">
                 <label for="notes" class="form-label">ملاحظات (اختياري)</label>
@@ -175,7 +175,7 @@
     <script>
         // === Configuration ===
         const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
-        const SUPABASE_KEY = 'YOUR_NEW_API_KEY'; // Remplacez par le nouveau clé API de Supabase
+        const SUPABASE_KEY = 'YOUR_NEW_API_KEY'; // استبدل هذا بالمفتاح الجديد من Supabase Dashboard
         const ADMIN_PASSWORD = '03072002';
         const GLB_URL = 'https://raw.githubusercontent.com/Imadeddinesellami/nj/main/logo.glb';
 
@@ -269,7 +269,7 @@
             });
 
             // Admin icon
-            let adminModalInstance = null; // Variable pour stocker l'instance de la modale
+            let adminModalInstance = null;
             document.getElementById('admin-icon').addEventListener('click', function() {
                 console.log('Admin icon clicked');
                 if (!adminModalInstance) {
@@ -283,7 +283,7 @@
                 const password = document.getElementById('admin-password').value;
                 if (password === ADMIN_PASSWORD) {
                     if (adminModalInstance) {
-                        adminModalInstance.hide(); // Masquer la modale via l'instance
+                        adminModalInstance.hide();
                     }
                     document.getElementById('main-page').style.display = 'none';
                     document.getElementById('admin-page').style.display = 'block';
