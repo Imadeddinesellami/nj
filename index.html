@@ -7,7 +7,7 @@
     <!-- External Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
     <style>
@@ -42,7 +42,7 @@
             animation: blink 0.75s step-end infinite; 
         }
         #start-button {
-            padding: 15px 30px;
+            padding: 15px 30px; 
             font-size: 1.2rem;
             background-color: #007bff;
             color: white;
@@ -98,7 +98,7 @@
 
     <!-- Main Page -->
     <div id="main-page" class="container">
-        <img src="logo.glb" alt="Admin" class="admin-icon" id="admin-icon">
+        <img src="https://via.placeholder.com/30" alt="Admin" class="admin-icon" id="admin-icon">
         <h2 class="text-center mb-4">إدخال بيانات الطالب</h2>
         <form id="student-form">
             <div class="mb-3">
@@ -113,16 +113,20 @@
                 <label for="silver-stars" class="form-label">عدد النجوم الفضية</label>
                 <input type="number" class="form-control" id="silver-stars" min="0" required>
             </div>
-        <div class="mb-4">
+            <div class="mb-3">
                 <label for="notes" class="form-label">ملاحظات (اختياري)</label>
-                <textarea id="notes" class="form-control"></textarea>
+                <textarea class="form-control" id="notes"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">حفظ</button>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">حفظ</button>
+            </div>
         </form>
+    </div>
+
     <!-- Admin Page -->
     <div id="admin-page" class="container">
         <h2 class="text-center mb-4">لوحة الإدارة</h2>
-        <table class="table table-striped">
+        <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>اسم الطالب</th>
@@ -146,35 +150,37 @@
                 </div>
                 <div class="modal-body">
                     <p>هذه الصفحة خاصة بالأدمن. الرجاء إدخال كلمة المرور:</p>
-                    <input type="password" id="admin-password" class="form-control">
+                    <input type="password" class="form-control" id="admin-password">
                     <div id="error-message" class="text-danger mt-2"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="submit-password" class="btn btn-primary">تأكيد</button>
+                    <button type="button" class="btn btn-primary" id="submit-password">تأكيد</button>
                 </div>
             </div>
         </div>
-    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         // === Configuration ===
         const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4MywiIn0.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc';
         const ADMIN_PASSWORD = '03072002';
+        const GLB_URL = 'https://raw.githubusercontent.com/your-username/your-repo/main/logo.glb'; // استبدل باسم المستخدم واسم المستودع
 
-        // Initialize Supabase
+        // === Initialize Supabase ===
         let supabase;
         try {
-            supabase = new supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             console.log('Supabase initialized successfully');
         } catch (error) {
-            console.error('Error initializing Supabase:', error);
-            alert('فشل تهيئة Supabase. تأكد من اتصال الإنترنت.');
+            console.error('Error initializing Supabase:', error.message);
+            alert('فشل تهيئة Supabase. تأكد من اتصال الإنترنت أو مكتبة supabase-js.');
         }
 
         $(document).ready(function() {
             // Check jQuery
-            if (typeof $ === 'undefined') {
+            if (typeof window.jQuery === 'undefined') {
                 console.error('jQuery not loaded');
                 alert('فشل تحميل jQuery. تأكد من اتصال الإنترنت.');
                 return;
@@ -182,11 +188,11 @@
             console.log('jQuery loaded successfully');
 
             // === Welcome Page Animation ===
-            const text = 'مرحبًا بكم في نظام إدارة النجوم';
+            const text = 'مرحبًا بكمم في نظام إدارة النجوم';
             let index = 0;
             function type() {
                 if (index < text.length) {
-                    $('#welcome-text').text(text.slice(0, ++index));
+                    document.getElementById('welcome-text').innerText = text.slice(0, ++index);
                     setTimeout(type, 100);
                 }
             }
@@ -214,7 +220,7 @@
             // Load GLB
             const loader = new THREE.GLTFLoader();
             loader.load(
-                'https://raw.githubusercontent.com/your-username/your-repo/main/logo.glb', // استبدل برابط GLB من GitHub
+                GLB_URL,
                 (gltf) => {
                     const model = gltf.scene;
                     scene.add(model);
@@ -236,51 +242,53 @@
             );
 
             // Lighting and camera
-            scene.add(new THREE.DirectionalLight(0xffffff, 0.5).setPosition(5, 5, 5));
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
             scene.add(new THREE.AmbientLight(0xffffff, 0.7));
             camera.position.set(0, 1, 5);
 
             // === Event Handlers ===
             // Start button
-            $('#start-button').on('click', function() {
+            document.getElementById('start-button').addEventListener('click', function() {
                 console.log('Start button clicked');
-                $('#welcome-page').hide();
-                $('#main-page').show();
+                document.getElementById('welcome-page').style.display = 'none';
+                document.getElementById('main-page').style.display = 'block';
             });
 
             // Admin icon
-            $('#admin-icon').on('click', function() {
+            document.getElementById('admin-icon').addEventListener('click', function() {
                 console.log('Admin icon clicked');
-                $('#adminModal').modal('show');
+                new bootstrap.Modal(document.getElementById('adminModal')).show();
             });
 
             // Admin password submission
-            $('#submit-password').on('click', function() {
-                const password = $('#admin-password').val();
+            document.getElementById('submit-password').addEventListener('click', function() {
+                const password = document.getElementById('admin-password').value;
                 if (password === ADMIN_PASSWORD) {
-                    $('#adminModal').modal('hide');
-                    $('#main-page').hide();
-                    $('#admin-page').show();
+                    document.getElementById('adminModal').querySelector('.modal').hide();
+                    document.getElementById('main-page').style.display = 'none';
+                    document.getElementById('admin-page').style.display = 'block';
                     loadResults();
                 } else {
-                    $('#error-message').text('كلمة المرور غير صحيحة');
+                    document.getElementById('error-message').innerText = 'كلمة المرور غير صحيحة';
                 }
             });
 
             // Student form submission
-            $('#student-form').on('submit', async (e) => {
+            document.getElementById('student-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const student = {
-                    name: $('#student-name').val(),
-                    gold_stars: parseInt($('#gold-stars').val()) || 0,
-                    silver_stars: parseInt($('#silver-stars').val()) || 0,
-                    notes: $('#notes').val() || null
+                    name: document.getElementById('student-name').value,
+                    gold_stars: parseInt(document.getElementById('gold-stars').value) || 0,
+                    silver_stars: parseInt(document.getElementById('silver-stars').value) || 0,
+                    notes: document.getElementById('notes').value || null
                 };
 
                 try {
                     const { error } = await supabase.from('students').insert([student]);
                     if (error) throw error;
-                    $('#student-form')[0].reset();
+                    document.getElementById('student-form').reset();
                     alert('تم حفظ البيانات بنجاح');
                 } catch (error) {
                     console.error('Error saving student:', error);
@@ -293,43 +301,46 @@
                 try {
                     const { data, error } = await supabase.from('students').select('*').order('id', { ascending: true });
                     if (error) throw error;
-                    $('#results-table').empty();
+                    const tableBody = document.getElementById('results-table');
+                    tableBody.innerHTML = '';
                     data.forEach(student => {
-                        $('#results-table').append(`
-                            <tr>
-                                <td>${student.name}</td>
-                                <td>${student.gold_stars}</td>
-                                <td>${student.silver_stars}</td>
-                                <td>${student.notes || ''}</td>
-                                <td><button class="btn btn-warning btn-sm edit-btn" data-id="${student.id}">تعديل</button></td>
-                            </tr>
-                        `);
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${student.name}</td>
+                            <td>${student.gold_stars}</td>
+                            <td>${student.silver_stars}</td>
+                            <td>${student.notes || ''}</td>
+                            <td><button class="btn btn-warning btn-sm edit-btn" data-id="${student.id}">تعديل</button></td>
+                        `;
+                        tableBody.appendChild(row);
                     });
 
-                    $('.edit-btn').on('click', async function() {
-                        const id = $(this).data('id');
-                        const newGold = prompt('عدد النجوم الذهبية الجديد:', '');
-                        const newSilver = prompt('عدد النجوم الفضية الجديد:', '');
-                        const newNotes = prompt('الملاحظات الجديدة:', '');
+                    document.querySelectorAll('.edit-btn').forEach(button => {
+                        button.addEventListener('click', async function() {
+                            const id = this.getAttribute('data-id');
+                            const newGold = prompt('عدد النجوم الذهبية الجديد:', '');
+                            const newSilver = prompt('عدد النجوم الفضية الجديد:', '');
+                            const newNotes = prompt('الملاحظات الجديدة:', '');
 
-                        if (newGold !== null && newSilver !== null) {
-                            try {
-                                const { error } = await supabase
-                                    .from('students')
-                                    .update({
-                                        gold_stars: parseInt(newGold) || 0,
-                                        silver_stars: parseInt(newSilver) || 0,
-                                        notes: newNotes || null
-                                    })
-                                    .eq('id', id);
-                                if (error) throw error;
-                                alert('تم التعديل بنجاح');
-                                loadResults();
-                            } catch (error) {
-                                console.error('Error editing student:', error);
-                                alert('حدث خطأ أثناء التعديل: ' + error.message);
+                            if (newGold !== null && newSilver !== null) {
+                                try {
+                                    const { error } = await supabase
+                                        .from('students')
+                                        .update({
+                                            gold_stars: parseInt(newGold) || 0,
+                                            silver_stars: parseInt(newSilver) || 0,
+                                            notes: newNotes || null
+                                        })
+                                        .eq('id', id);
+                                    if (error) throw error;
+                                    alert('تم التعديل بنجاح');
+                                    loadResults();
+                                } catch (error) {
+                                    console.error('Error editing student:', error);
+                                    alert('حدث خطأ أثناء التعديل: ' + error.message);
+                                }
                             }
-                        }
+                        });
                     });
                 } catch (error) {
                     console.error('Error loading results:', error);
