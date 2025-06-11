@@ -1,198 +1,284 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة النجوم</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <style>
-        body { font-family: 'Tajawal', sans-serif; background: white; margin: 0; }
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة النجوم</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
 
-        #welcome-page {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; background: white;
-        }
-        #logo-container {
-            width: 400px; height: 400px; margin-bottom: 30px;
-        }
-        #welcome-text {
-            font-size: 3rem; color: #00aaff; font-weight: bold;
-        }
-        #start-button {
-            padding: 20px 50px; font-size: 1.5rem;
-            background-color: #00aaff; color: white;
-            border: none; border-radius: 10px;
-            transition: 0.3s ease;
-        }
-        #start-button:hover {
-            background-color: #0090d0;
-        }
+    #welcome-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: transparent;
+    }
 
-        .admin-icon {
-            position: fixed; top: 20px; left: 20px; cursor: pointer;
-            width: 50px; z-index: 1000;
-        }
+    #logo-container {
+      width: 400px;
+      height: 400px;
+      margin-bottom: 30px;
+    }
 
-        #admin-page {
-            display: none; padding: 30px;
-        }
+    #welcome-text {
+      font-size: 2.5rem;
+      color: #004085;
+      font-weight: bold;
+    }
 
-        table {
-            background: #f8f9fa; border-radius: 12px; overflow: hidden;
-        }
-        th {
-            background-color: #00aaff; color: white;
-        }
+    #start-button {
+      padding: 12px 35px;
+      font-size: 1.3rem;
+      border: none;
+      border-radius: 10px;
+      background-color: #004085;
+      color: #fff;
+    }
 
-        #search-bar {
-            max-width: 300px;
-            border: 2px solid #00aaff; border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        #export-btn {
-            background: #ffc107; border: none; padding: 10px 20px; border-radius: 10px;
-        }
+    #start-button:hover {
+      background-color: #002752;
+    }
 
-        @media (max-width: 768px) {
-            #logo-container { width: 300px; height: 300px; }
-            #welcome-text { font-size: 2rem; }
-            #start-button { font-size: 1.2rem; padding: 12px 25px; }
-        }
-    </style>
+    #admin-icon {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      cursor: pointer;
+      width: 50px;
+    }
+
+    #admin-page {
+      display: none;
+      padding: 40px;
+    }
+
+    table {
+      margin-top: 30px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    th {
+      background-color: #004085;
+      color: white;
+    }
+
+    #add-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    #add-form input, #add-form button {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    #export-btn {
+      background-color: #ffc107;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: #000;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div id="welcome-page">
-        <div id="logo-container"></div>
-        <div id="welcome-text">مرحبًا بكم في نظام إدارة النجوم</div>
-        <button id="start-button">إبدأ الآن <i class="fas fa-play"></i></button>
-    </div>
+  <div id="welcome-page">
+    <div id="logo-container"></div>
+    <div id="welcome-text">مرحبًا بكم في نظام إدارة النجوم</div>
+    <button id="start-button">إبدأ الآن <i class="fas fa-play"></i></button>
+  </div>
 
-    <div id="admin-page" class="container">
-        <h2 class="text-center mb-4 text-primary">لوحة الإدارة <i class="fas fa-star"></i></h2>
-        <input type="text" id="search-bar" placeholder="ابحث باسم الطالب..." class="form-control">
-        <button id="export-btn">تصدير إلى Excel <i class="fas fa-file-export"></i></button>
-        <table class="table table-striped mt-3">
-            <thead>
-                <tr>
-                    <th>اسم الطالب</th>
-                    <th>النجوم الذهبية</th>
-                    <th>النجوم الفضية</th>
-                    <th>ملاحظات</th>
-                    <th>التاريخ</th>
-                </tr>
-            </thead>
-            <tbody id="results-table"></tbody>
-        </table>
-    </div>
+  <img src="https://cdn-icons-png.flaticon.com/512/147/147144.png" alt="Admin" id="admin-icon">
 
-    <img src="https://cdn-icons-png.flaticon.com/512/147/147144.png" alt="Admin" class="admin-icon" id="admin-icon">
+  <div id="admin-page" class="container">
+    <h2 class="text-center mb-4">لوحة الإدارة <i class="fas fa-star"></i></h2>
 
-    <!-- Modal -->
-    <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-primary">تسجيل دخول الأدمن</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>أدخل كلمة المرور للتمكن من تعديل أو حذف البيانات:</p>
-                    <input type="password" id="admin-password" class="form-control">
-                    <div id="error-message" class="text-danger mt-2"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="submit-password">تأكيد</button>
-                </div>
-            </div>
+    <form id="add-form">
+      <input type="text" id="student-name" placeholder="اسم الطالب" required>
+      <input type="number" id="gold-stars" placeholder="النجوم الذهبية" min="0" required>
+      <input type="number" id="silver-stars" placeholder="النجوم الفضية" min="0" required>
+      <input type="text" id="student-notes" placeholder="ملاحظات">
+      <button type="submit" class="btn btn-success">إضافة</button>
+    </form>
+
+    <button id="export-btn">تصدير إلى Excel <i class="fas fa-file-export"></i></button>
+
+    <table class="table table-striped text-center">
+      <thead>
+        <tr>
+          <th>اسم الطالب</th>
+          <th>ذهب</th>
+          <th>فضة</th>
+          <th>ملاحظات</th>
+          <th>تاريخ</th>
+          <th class="admin-only">تعديل</th>
+          <th class="admin-only">حذف</th>
+        </tr>
+      </thead>
+      <tbody id="results-table"></tbody>
+    </table>
+  </div>
+
+  <div class="modal fade" id="adminModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">تسجيل دخول الأدمن</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
+        <div class="modal-body">
+          <input type="password" class="form-control" id="admin-password" placeholder="كلمة السر">
+          <div id="error-message" class="text-danger mt-2"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="submit-password">تأكيد</button>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
-    <script>
-        const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc';
-        const ADMIN_PASSWORD = '03072002';
-        const GLB_URL = 'https://raw.githubusercontent.com/Imadeddinesellami/nj/main/logo.glb';
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const { createClient } = supabase;
+      const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc';
+      const ADMIN_PASSWORD = '03072002';
+      const client = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const welcomePage = document.getElementById('welcome-page');
+      const adminPage = document.getElementById('admin-page');
+      const tableBody = document.getElementById('results-table');
 
-        document.getElementById('start-button').onclick = () => {
-            document.getElementById('welcome-page').style.display = 'none';
-            document.getElementById('admin-page').style.display = 'block';
-        };
+      document.getElementById('start-button').onclick = () => {
+        welcomePage.style.display = 'none';
+        adminPage.style.display = 'block';
+        loadData(false);
+      };
 
-        const logoContainer = document.getElementById('logo-container');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true });
-        renderer.setSize(logoContainer.clientWidth, logoContainer.clientHeight);
-        logoContainer.appendChild(renderer.domElement);
+      const modal = new bootstrap.Modal(document.getElementById('adminModal'));
+      document.getElementById('admin-icon').onclick = () => modal.show();
 
-        const loader = new THREE.GLTFLoader();
-        loader.load(GLB_URL, gltf => {
-            const model = gltf.scene;
-            model.scale.set(5, 5, 5);
-            model.rotation.y = Math.PI / 4;
-            scene.add(model);
-            function animate() {
-                requestAnimationFrame(animate);
-                model.rotation.y += 0.01;
-                renderer.render(scene, camera);
-            }
-            animate();
+      document.getElementById('submit-password').onclick = () => {
+        const pass = document.getElementById('admin-password').value;
+        if (pass === ADMIN_PASSWORD) {
+          modal.hide();
+          loadData(true);
+        } else {
+          document.getElementById('error-message').textContent = 'كلمة المرور غير صحيحة';
+        }
+      };
+
+      async function loadData(isAdmin) {
+        const { data, error } = await client.from('students').select('*').order('created_at', { ascending: false });
+        if (error) return alert('خطأ في تحميل البيانات');
+        tableBody.innerHTML = '';
+        data.forEach(item => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${item.name}</td>
+            <td>${item.gold_stars}</td>
+            <td>${item.silver_stars}</td>
+            <td>${item.notes || ''}</td>
+            <td>${new Date(item.created_at).toLocaleString('ar-EG')}</td>
+            ${isAdmin ? `<td><button class="btn btn-warning btn-sm" onclick="editStudent(${item.id})">تعديل</button></td>` : '<td>-</td>'}
+            ${isAdmin ? `<td><button class="btn btn-danger btn-sm" onclick="deleteStudent(${item.id})">حذف</button></td>` : '<td>-</td>'}
+          `;
+          tableBody.appendChild(row);
         });
+      }
 
-        camera.position.set(0, 2, 7);
-        scene.add(new THREE.AmbientLight(0xffffff, 1));
-        const light = new THREE.DirectionalLight(0xffffff, 0.8);
-        light.position.set(5, 5, 5);
+      window.deleteStudent = async function(id) {
+        if (confirm('هل تريد حذف هذا الطالب؟')) {
+          await client.from('students').delete().eq('id', id);
+          loadData(true);
+        }
+      };
+
+      window.editStudent = async function(id) {
+        const name = prompt('اسم جديد؟');
+        const gold = prompt('عدد النجوم الذهبية؟');
+        const silver = prompt('عدد النجوم الفضية؟');
+        const notes = prompt('ملاحظات؟');
+        await client.from('students').update({
+          name: name,
+          gold_stars: parseInt(gold),
+          silver_stars: parseInt(silver),
+          notes: notes
+        }).eq('id', id);
+        loadData(true);
+      };
+
+      document.getElementById('add-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('student-name').value;
+        const gold = document.getElementById('gold-stars').value;
+        const silver = document.getElementById('silver-stars').value;
+        const notes = document.getElementById('student-notes').value;
+        await client.from('students').insert({
+          name,
+          gold_stars: parseInt(gold),
+          silver_stars: parseInt(silver),
+          notes
+        });
+        e.target.reset();
+        loadData(true);
+      };
+
+      document.getElementById('export-btn').onclick = () => {
+        const rows = [['اسم الطالب', 'ذهب', 'فضة', 'ملاحظات', 'تاريخ']];
+        document.querySelectorAll('#results-table tr').forEach(tr => {
+          const cells = [...tr.children];
+          rows.push(cells.slice(0, 5).map(td => td.textContent));
+        });
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(rows);
+        XLSX.utils.book_append_sheet(wb, ws, 'Students');
+        XLSX.writeFile(wb, 'students.xlsx');
+      };
+
+      // Three.js logo rendering
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true });
+      renderer.setSize(400, 400);
+      document.getElementById('logo-container').appendChild(renderer.domElement);
+      const loader = new THREE.GLTFLoader();
+      loader.load('https://raw.githubusercontent.com/Imadeddinesellami/nj/main/logo.glb', gltf => {
+        const model = gltf.scene;
+        model.scale.set(5, 5, 5);
+        scene.add(model);
+        camera.position.z = 7;
+        const light = new THREE.AmbientLight(0xffffff);
         scene.add(light);
-
-        const adminIcon = document.getElementById('admin-icon');
-        let modal = new bootstrap.Modal(document.getElementById('adminModal'));
-        adminIcon.onclick = () => modal.show();
-
-        document.getElementById('submit-password').onclick = async () => {
-            const password = document.getElementById('admin-password').value;
-            if (password !== ADMIN_PASSWORD) {
-                document.getElementById('error-message').textContent = 'كلمة المرور غير صحيحة';
-                return;
-            }
-            modal.hide();
-            const { data } = await supabase.from('students').select('*').order('name');
-            const tbody = document.getElementById('results-table');
-            tbody.innerHTML = '';
-            data.forEach(s => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${s.name}</td>
-                    <td>${s.gold_stars}</td>
-                    <td>${s.silver_stars}</td>
-                    <td>${s.notes || ''}</td>
-                    <td>${new Date(s.created_at).toLocaleString('ar-EG')}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        };
-
-        document.getElementById('export-btn').onclick = () => {
-            TableToExcel.convert(document.querySelector("table"), {
-                name: "students-data.xlsx"
-            });
-        };
-
-        document.getElementById('search-bar').oninput = function () {
-            const value = this.value.toLowerCase();
-            document.querySelectorAll('#results-table tr').forEach(tr => {
-                tr.style.display = tr.textContent.toLowerCase().includes(value) ? '' : 'none';
-            });
-        };
-    </script>
+        function animate() {
+          requestAnimationFrame(animate);
+          model.rotation.y += 0.01;
+          renderer.render(scene, camera);
+        }
+        animate();
+      });
+    });
+  </script>
 </body>
 </html>
