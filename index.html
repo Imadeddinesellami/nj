@@ -1,201 +1,198 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>نظام إدارة النجوم</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
-  <style>
-    body { font-family: 'Tajawal', sans-serif; margin: 0; background: linear-gradient(135deg, #e6f0fa, #ffffff); }
-    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
-    #welcome-page {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      height: 100vh; background: url('https://www.transparenttextures.com/patterns/stardust.png'), linear-gradient(135deg, #e6f0fa, #ffffff);
-      border-radius: 25px; box-shadow: 0 10px 30px rgba(0, 123, 255, 0.3); overflow: hidden;
-    }
-    #logo-container { width: 450px; height: 450px; margin-bottom: 50px; border: 5px solid #00aaff;
-      border-radius: 20px; overflow: hidden; position: relative;
-    }
-    #welcome-text { font-size: 3.5rem; color: #00aaff; text-align: center; margin-bottom: 50px; font-weight: 700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); }
-    .typing { display: inline-block; white-space: nowrap; overflow: hidden; border-right: 4px solid #00aaff; animation: blink 0.75s step-end infinite; }
-    #start-button { padding: 25px 60px; font-size: 1.8rem; background-color: #00aaff; color: white; border: none; border-radius: 15px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(0, 170, 255, 0.5); }
-    #start-button:hover { background-color: #0090d0; transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0, 170, 255, 0.6); }
-    #admin-page { display: none; padding: 50px; background-color: #ffffff; border-radius: 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); margin: 20px; }
-    .admin-icon { position: fixed; top: 20px; left: 20px; cursor: pointer; width: 60px; transition: transform 0.3s; }
-    .admin-icon:hover { transform: scale(1.3); }
-    #search-bar { width: 100%; max-width: 300px; margin-bottom: 20px; padding: 10px; border: 2px solid #00aaff; border-radius: 10px; }
-    #export-btn { margin-top: 20px; padding: 12px 25px; background-color: #ffd700; color: #333; border: none; border-radius: 10px; cursor: pointer; }
-    #export-btn:hover { background-color: #e6c200; transform: translateY(-2px); }
-    @keyframes blink { 50% { border-color: transparent; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة النجوم</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background: white; margin: 0; }
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+        #welcome-page {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; background: white;
+        }
+        #logo-container {
+            width: 400px; height: 400px; margin-bottom: 30px;
+        }
+        #welcome-text {
+            font-size: 3rem; color: #00aaff; font-weight: bold;
+        }
+        #start-button {
+            padding: 20px 50px; font-size: 1.5rem;
+            background-color: #00aaff; color: white;
+            border: none; border-radius: 10px;
+            transition: 0.3s ease;
+        }
+        #start-button:hover {
+            background-color: #0090d0;
+        }
+
+        .admin-icon {
+            position: fixed; top: 20px; left: 20px; cursor: pointer;
+            width: 50px; z-index: 1000;
+        }
+
+        #admin-page {
+            display: none; padding: 30px;
+        }
+
+        table {
+            background: #f8f9fa; border-radius: 12px; overflow: hidden;
+        }
+        th {
+            background-color: #00aaff; color: white;
+        }
+
+        #search-bar {
+            max-width: 300px;
+            border: 2px solid #00aaff; border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        #export-btn {
+            background: #ffc107; border: none; padding: 10px 20px; border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            #logo-container { width: 300px; height: 300px; }
+            #welcome-text { font-size: 2rem; }
+            #start-button { font-size: 1.2rem; padding: 12px 25px; }
+        }
+    </style>
 </head>
 <body>
-
-<div id="welcome-page">
-  <div id="logo-container"></div>
-  <div id="welcome-text" class="typing"></div>
-  <button id="start-button">إبدأ الآن <i class="fas fa-play"></i></button>
-</div>
-
-<div id="admin-page" class="container">
-  <h2 class="text-center mb-4" style="color: #00aaff;">لوحة الإدارة <i class="fas fa-star"></i></h2>
-
-  <!-- إضافة طالب جديد -->
-  <div class="card p-4 mb-4 shadow-sm">
-    <h5 class="mb-3">إضافة طالب جديد</h5>
-    <div class="row g-3">
-      <div class="col-md-3"><input type="text" id="student-name" class="form-control" placeholder="اسم الطالب"></div>
-      <div class="col-md-2"><input type="number" id="gold-stars" class="form-control" placeholder="نجوم ذهبية"></div>
-      <div class="col-md-2"><input type="number" id="silver-stars" class="form-control" placeholder="نجوم فضية"></div>
-      <div class="col-md-3"><input type="text" id="student-notes" class="form-control" placeholder="ملاحظات"></div>
-      <div class="col-md-2"><button class="btn btn-success w-100" id="add-student">إضافة <i class="fas fa-plus"></i></button></div>
+    <div id="welcome-page">
+        <div id="logo-container"></div>
+        <div id="welcome-text">مرحبًا بكم في نظام إدارة النجوم</div>
+        <button id="start-button">إبدأ الآن <i class="fas fa-play"></i></button>
     </div>
-  </div>
 
-  <input type="text" id="search-bar" placeholder="ابحث باسم الطالب..." class="form-control">
-  <button id="export-btn">تصدير إلى Excel <i class="fas fa-file-export"></i></button>
+    <div id="admin-page" class="container">
+        <h2 class="text-center mb-4 text-primary">لوحة الإدارة <i class="fas fa-star"></i></h2>
+        <input type="text" id="search-bar" placeholder="ابحث باسم الطالب..." class="form-control">
+        <button id="export-btn">تصدير إلى Excel <i class="fas fa-file-export"></i></button>
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>اسم الطالب</th>
+                    <th>النجوم الذهبية</th>
+                    <th>النجوم الفضية</th>
+                    <th>ملاحظات</th>
+                    <th>التاريخ</th>
+                </tr>
+            </thead>
+            <tbody id="results-table"></tbody>
+        </table>
+    </div>
 
-  <table class="table table-striped mt-4">
-    <thead>
-      <tr>
-        <th>الاسم</th>
-        <th>ذهبية</th>
-        <th>فضية</th>
-        <th>ملاحظات</th>
-        <th>الوقت</th>
-        <th>تعديل</th>
-      </tr>
-    </thead>
-    <tbody id="results-table"></tbody>
-  </table>
-</div>
+    <img src="https://cdn-icons-png.flaticon.com/512/147/147144.png" alt="Admin" class="admin-icon" id="admin-icon">
 
-<img src="https://cdn-icons-png.flaticon.com/512/147/147144.png" alt="Admin" class="admin-icon" id="admin-icon">
+    <!-- Modal -->
+    <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary">تسجيل دخول الأدمن</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>أدخل كلمة المرور للتمكن من تعديل أو حذف البيانات:</p>
+                    <input type="password" id="admin-password" class="form-control">
+                    <div id="error-message" class="text-danger mt-2"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="submit-password">تأكيد</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
+    <script>
+        const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc';
+        const ADMIN_PASSWORD = '03072002';
+        const GLB_URL = 'https://raw.githubusercontent.com/Imadeddinesellami/nj/main/logo.glb';
 
-  document.addEventListener('DOMContentLoaded', function () {
-    // Typing effect
-    const text = 'مرحبًا بكم في نظام إدارة النجوم';
-    let index = 0;
-    function type() {
-      if (index < text.length) {
-        document.getElementById('welcome-text').innerText = text.slice(0, ++index);
-        setTimeout(type, 100);
-      }
-    }
-    type();
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Three.js Logo
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    const logoContainer = document.getElementById('logo-container');
-    logoContainer.appendChild(renderer.domElement);
-    const loader = new THREE.GLTFLoader();
-    loader.load('https://raw.githubusercontent.com/Imadeddinesellami/nj/main/logo.glb', function (gltf) {
-      const model = gltf.scene;
-      scene.add(model);
-      model.rotation.y = Math.PI / 4;
-      model.scale.set(5, 5, 5);
-      function animate() {
-        requestAnimationFrame(animate);
-        model.rotation.y += 0.01;
-        renderer.render(scene, camera);
-      }
-      animate();
-    });
-    scene.add(new THREE.DirectionalLight(0xffffff, 0.8));
-    scene.add(new THREE.AmbientLight(0xffffff, 1.0));
-    camera.position.set(0, 2, 7);
-    renderer.setSize(logoContainer.clientWidth, logoContainer.clientHeight);
-    camera.aspect = logoContainer.clientWidth / logoContainer.clientHeight;
-    camera.updateProjectionMatrix();
-    window.addEventListener('resize', () => {
-      renderer.setSize(logoContainer.clientWidth, logoContainer.clientHeight);
-      camera.aspect = logoContainer.clientWidth / logoContainer.clientHeight;
-      camera.updateProjectionMatrix();
-    });
-
-    // Start
-    document.getElementById('start-button').onclick = () => {
-      document.getElementById('welcome-page').style.display = 'none';
-      document.getElementById('admin-page').style.display = 'block';
-      loadResults();
-    };
-
-    // إضافة طالب
-    document.getElementById('add-student').onclick = async () => {
-      const name = document.getElementById('student-name').value;
-      const gold = parseInt(document.getElementById('gold-stars').value) || 0;
-      const silver = parseInt(document.getElementById('silver-stars').value) || 0;
-      const notes = document.getElementById('student-notes').value;
-      if (!name) return alert('يرجى إدخال اسم الطالب');
-      const { error } = await supabase.from('students').insert([{ name, gold_stars: gold, silver_stars: silver, notes }]);
-      if (error) return alert('فشل الإضافة: ' + error.message);
-      alert('تمت الإضافة بنجاح');
-      loadResults();
-    };
-
-    // تحميل البيانات
-    async function loadResults() {
-      const { data, error } = await supabase.from('students').select('*').order('created_at', { ascending: false });
-      const tableBody = document.getElementById('results-table');
-      tableBody.innerHTML = '';
-      if (error) return alert('خطأ في تحميل البيانات: ' + error.message);
-      data.forEach(student => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${student.name}</td>
-          <td>${student.gold_stars}</td>
-          <td>${student.silver_stars}</td>
-          <td>${student.notes || ''}</td>
-          <td>${new Date(student.created_at).toLocaleString('ar-EG')}</td>
-          <td><button class="btn btn-sm btn-warning edit-btn" data-id="${student.id}">تعديل</button></td>
-        `;
-        tableBody.appendChild(row);
-      });
-
-      // تعديل
-      document.querySelectorAll('.edit-btn').forEach(button => {
-        button.onclick = async function () {
-          const id = this.dataset.id;
-          const newName = prompt('اسم الطالب الجديد؟');
-          const newGold = prompt('عدد النجوم الذهبية؟');
-          const newSilver = prompt('عدد النجوم الفضية؟');
-          const newNotes = prompt('ملاحظات؟');
-          const { error } = await supabase.from('students').update({
-            name: newName, gold_stars: parseInt(newGold), silver_stars: parseInt(newSilver), notes: newNotes
-          }).eq('id', id);
-          if (error) alert('فشل التعديل: ' + error.message);
-          else loadResults();
+        document.getElementById('start-button').onclick = () => {
+            document.getElementById('welcome-page').style.display = 'none';
+            document.getElementById('admin-page').style.display = 'block';
         };
-      });
-    }
 
-    // البحث
-    document.getElementById('search-bar').addEventListener('input', function () {
-      const val = this.value.toLowerCase();
-      document.querySelectorAll('#results-table tr').forEach(row => {
-        row.style.display = row.children[0].textContent.toLowerCase().includes(val) ? '' : 'none';
-      });
-    });
+        const logoContainer = document.getElementById('logo-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(logoContainer.clientWidth, logoContainer.clientHeight);
+        logoContainer.appendChild(renderer.domElement);
 
-    // تصدير
-    document.getElementById('export-btn').onclick = () => {
-      TableToExcel.convert(document.querySelector("table"), { name: "students.xlsx" });
-    };
-  });
-</script>
+        const loader = new THREE.GLTFLoader();
+        loader.load(GLB_URL, gltf => {
+            const model = gltf.scene;
+            model.scale.set(5, 5, 5);
+            model.rotation.y = Math.PI / 4;
+            scene.add(model);
+            function animate() {
+                requestAnimationFrame(animate);
+                model.rotation.y += 0.01;
+                renderer.render(scene, camera);
+            }
+            animate();
+        });
+
+        camera.position.set(0, 2, 7);
+        scene.add(new THREE.AmbientLight(0xffffff, 1));
+        const light = new THREE.DirectionalLight(0xffffff, 0.8);
+        light.position.set(5, 5, 5);
+        scene.add(light);
+
+        const adminIcon = document.getElementById('admin-icon');
+        let modal = new bootstrap.Modal(document.getElementById('adminModal'));
+        adminIcon.onclick = () => modal.show();
+
+        document.getElementById('submit-password').onclick = async () => {
+            const password = document.getElementById('admin-password').value;
+            if (password !== ADMIN_PASSWORD) {
+                document.getElementById('error-message').textContent = 'كلمة المرور غير صحيحة';
+                return;
+            }
+            modal.hide();
+            const { data } = await supabase.from('students').select('*').order('name');
+            const tbody = document.getElementById('results-table');
+            tbody.innerHTML = '';
+            data.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${s.name}</td>
+                    <td>${s.gold_stars}</td>
+                    <td>${s.silver_stars}</td>
+                    <td>${s.notes || ''}</td>
+                    <td>${new Date(s.created_at).toLocaleString('ar-EG')}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        };
+
+        document.getElementById('export-btn').onclick = () => {
+            TableToExcel.convert(document.querySelector("table"), {
+                name: "students-data.xlsx"
+            });
+        };
+
+        document.getElementById('search-bar').oninput = function () {
+            const value = this.value.toLowerCase();
+            document.querySelectorAll('#results-table tr').forEach(tr => {
+                tr.style.display = tr.textContent.toLowerCase().includes(value) ? '' : 'none';
+            });
+        };
+    </script>
 </body>
 </html>
