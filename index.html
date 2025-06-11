@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة النجوم</title>
+    <!-- External Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
     <style>
+        /* General Styles */
         body { font-family: Arial, sans-serif; margin: 0; }
         #welcome-page { 
             display: flex; 
@@ -69,35 +71,20 @@
         table { 
             margin-top: 20px; 
         }
+        /* Animations */
         @keyframes blink { 
             50% { border-color: transparent; } 
         }
         /* Responsive Design */
         @media (max-width: 768px) {
-            #logo-container { 
-                max-width: 200px; 
-                height: 200px; 
-            }
-            #welcome-text { 
-                font-size: 1.5rem; 
-            }
-            #start-button { 
-                padding: 10px 20px; 
-                font-size: 1rem; 
-            }
+            #logo-container { max-width: 200px; height: 200px; }
+            #welcome-text { font-size: 1.5rem; }
+            #start-button { padding: 10px 20px; font-size: 1rem; }
         }
         @media (max-width: 480px) {
-            #logo-container { 
-                max-width: 150px; 
-                height: 150px; 
-            }
-            #welcome-text { 
-                font-size: 1.2rem; 
-            }
-            #start-button { 
-                padding: 8px 15px; 
-                font-size: 0.9rem; 
-            }
+            #logo-container { max-width: 150px; height: 150px; }
+            #welcome-text { font-size: 1.2rem; }
+            #start-button { padding: 8px 15px; font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -126,18 +113,16 @@
                 <label for="silver-stars" class="form-label">عدد النجوم الفضية</label>
                 <input type="number" class="form-control" id="silver-stars" min="0" required>
             </div>
-            <div class="mb-3">
+        <div class="mb-4">
                 <label for="notes" class="form-label">ملاحظات (اختياري)</label>
-                <textarea class="form-control" id="notes"></textarea>
+                <textarea id="notes" class="form-control"></textarea>
             </div>
             <button type="submit" class="btn btn-primary">حفظ</button>
         </form>
-    </div>
-
     <!-- Admin Page -->
     <div id="admin-page" class="container">
         <h2 class="text-center mb-4">لوحة الإدارة</h2>
-        <table class="table table-bordered">
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>اسم الطالب</th>
@@ -157,29 +142,38 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">تسجيل دخول الأدمن</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>هذه الصفحة خاصة بالأدمن. الرجاء إدخال كلمة المرور:</p>
-                    <input type="password" class="form-control" id="admin-password">
+                    <input type="password" id="admin-password" class="form-control">
                     <div id="error-message" class="text-danger mt-2"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="submit-password">تأكيد</button>
+                    <button type="button" id="submit-password" class="btn btn-primary">تأكيد</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Supabase Configuration
-        const supabaseUrl = 'https://navizoyogxodbjtetwls.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc';
-        const supabase = Supabase.createClient(supabaseUrl, supabaseKey);
+        // === Configuration ===
+        const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc';
         const ADMIN_PASSWORD = '03072002';
 
+        // Initialize Supabase
+        let supabase;
+        try {
+            supabase = new supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log('Supabase initialized successfully');
+        } catch (error) {
+            console.error('Error initializing Supabase:', error);
+            alert('فشل تهيئة Supabase. تأكد من اتصال الإنترنت.');
+        }
+
         $(document).ready(function() {
-            // Check if jQuery is loaded
+            // Check jQuery
             if (typeof $ === 'undefined') {
                 console.error('jQuery not loaded');
                 alert('فشل تحميل jQuery. تأكد من اتصال الإنترنت.');
@@ -187,7 +181,7 @@
             }
             console.log('jQuery loaded successfully');
 
-            // Typing animation for welcome text
+            // === Welcome Page Animation ===
             const text = 'مرحبًا بكم في نظام إدارة النجوم';
             let index = 0;
             function type() {
@@ -198,18 +192,18 @@
             }
             type();
 
-            // Three.js for GLB logo
+            // === Three.js for GLB Logo ===
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ alpha: true });
             renderer.setSize(300, 300);
-            document.getElementById('logo-container').appendChild(renderer.domElement);
+            const logoContainer = document.getElementById('logo-container');
+            logoContainer.appendChild(renderer.domElement);
 
             // Responsive renderer size
             function updateRendererSize() {
-                const container = document.getElementById('logo-container');
-                const width = container.clientWidth;
-                const height = container.clientHeight;
+                const width = logoContainer.clientWidth;
+                const height = logoContainer.clientHeight;
                 renderer.setSize(width, height);
                 camera.aspect = width / height;
                 camera.updateProjectionMatrix();
@@ -217,14 +211,15 @@
             window.addEventListener('resize', updateRendererSize);
             updateRendererSize();
 
+            // Load GLB
             const loader = new THREE.GLTFLoader();
             loader.load(
-                '/logo.glb', // استبدل برابط ملف GLB العام (مثل https://your-supabase-id.supabase.co/storage/v1/object/public/logos/logo.glb)
-                function (gltf) {
+                'https://raw.githubusercontent.com/your-username/your-repo/main/logo.glb', // استبدل برابط GLB من GitHub
+                (gltf) => {
                     const model = gltf.scene;
                     scene.add(model);
                     model.position.set(0, 0, 0);
-                    model.scale.set(3, 3, 3); // ضبط الحجم
+                    model.scale.set(3, 3, 3);
                     function animate() {
                         requestAnimationFrame(animate);
                         model.rotation.y += 0.01;
@@ -233,37 +228,33 @@
                     animate();
                     console.log('GLB model loaded successfully');
                 },
-                function (xhr) {
-                    console.log('GLB loading: ' + (xhr.loaded / xhr.total * 100) + '%');
-                },
-                function (error) {
+                (xhr) => console.log('GLB loading: ' + (xhr.loaded / xhr.total * 100) + '%'),
+                (error) => {
                     console.error('Error loading GLB:', error);
                     alert('فشل تحميل الشعار ثلاثي الأبعاد. تأكد من رابط ملف GLB.');
                 }
             );
 
-            // Lighting and camera setup
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-            directionalLight.position.set(5, 5, 5);
-            scene.add(directionalLight);
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-            scene.add(ambientLight);
+            // Lighting and camera
+            scene.add(new THREE.DirectionalLight(0xffffff, 0.5).setPosition(5, 5, 5));
+            scene.add(new THREE.AmbientLight(0xffffff, 0.7));
             camera.position.set(0, 1, 5);
 
-            // Handle start button click
+            // === Event Handlers ===
+            // Start button
             $('#start-button').on('click', function() {
                 console.log('Start button clicked');
                 $('#welcome-page').hide();
                 $('#main-page').show();
             });
 
-            // Handle admin icon click
+            // Admin icon
             $('#admin-icon').on('click', function() {
                 console.log('Admin icon clicked');
                 $('#adminModal').modal('show');
             });
 
-            // Handle admin password submission
+            // Admin password submission
             $('#submit-password').on('click', function() {
                 const password = $('#admin-password').val();
                 if (password === ADMIN_PASSWORD) {
@@ -276,29 +267,32 @@
                 }
             });
 
-            // Handle student form submission
-            $('#student-form').submit(async (e) => {
+            // Student form submission
+            $('#student-form').on('submit', async (e) => {
                 e.preventDefault();
                 const student = {
                     name: $('#student-name').val(),
-                    gold_stars: parseInt($('#gold-stars').val()),
-                    silver_stars: parseInt($('#silver-stars').val()),
+                    gold_stars: parseInt($('#gold-stars').val()) || 0,
+                    silver_stars: parseInt($('#silver-stars').val()) || 0,
                     notes: $('#notes').val() || null
                 };
 
-                const { error } = await supabase.from('students').insert([student]);
-                if (!error) {
+                try {
+                    const { error } = await supabase.from('students').insert([student]);
+                    if (error) throw error;
                     $('#student-form')[0].reset();
                     alert('تم حفظ البيانات بنجاح');
-                } else {
+                } catch (error) {
+                    console.error('Error saving student:', error);
                     alert('حدث خطأ أثناء الحفظ: ' + error.message);
                 }
             });
 
-            // Load results for admin
+            // Load admin results
             async function loadResults() {
-                const { data, error } = await supabase.from('students').select('*').order('id', { ascending: true });
-                if (!error && data) {
+                try {
+                    const { data, error } = await supabase.from('students').select('*').order('id', { ascending: true });
+                    if (error) throw error;
                     $('#results-table').empty();
                     data.forEach(student => {
                         $('#results-table').append(`
@@ -319,25 +313,27 @@
                         const newNotes = prompt('الملاحظات الجديدة:', '');
 
                         if (newGold !== null && newSilver !== null) {
-                            const { error } = await supabase
-                                .from('students')
-                                .update({
-                                    gold_stars: parseInt(newGold) || 0,
-                                    silver_stars: parseInt(newSilver) || 0,
-                                    notes: newNotes || null
-                                })
-                                .eq('id', id);
-
-                            if (!error) {
+                            try {
+                                const { error } = await supabase
+                                    .from('students')
+                                    .update({
+                                        gold_stars: parseInt(newGold) || 0,
+                                        silver_stars: parseInt(newSilver) || 0,
+                                        notes: newNotes || null
+                                    })
+                                    .eq('id', id);
+                                if (error) throw error;
                                 alert('تم التعديل بنجاح');
                                 loadResults();
-                            } else {
+                            } catch (error) {
+                                console.error('Error editing student:', error);
                                 alert('حدث خطأ أثناء التعديل: ' + error.message);
                             }
                         }
                     });
-                } else {
-                    alert('حدث خطأ أثناء تحميل البيانات: ' + (error ? error.message : 'غير معروف'));
+                } catch (error) {
+                    console.error('Error loading results:', error);
+                    alert('حدث خطأ أثناء تحميل البيانات: ' + error.message);
                 }
             }
         });
