@@ -56,6 +56,27 @@
     </style>
 </head>
 <body>
+<div class="card p-4 mb-4" style="background-color: #f0faff; border-radius: 20px;">
+    <h5 class="mb-3" style="color: #0077aa;">إضافة طالب جديد <i class="fas fa-user-plus"></i></h5>
+    <div class="row g-3">
+        <div class="col-md-3">
+            <input type="text" id="new-name" class="form-control" placeholder="اسم الطالب">
+        </div>
+        <div class="col-md-2">
+            <input type="number" id="new-gold" class="form-control" placeholder="النجوم الذهبية">
+        </div>
+        <div class="col-md-2">
+            <input type="number" id="new-silver" class="form-control" placeholder="النجوم الفضية">
+        </div>
+        <div class="col-md-3">
+            <input type="text" id="new-notes" class="form-control" placeholder="ملاحظات">
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-success w-100" id="add-student-btn">حفظ <i class="fas fa-save"></i></button>
+        </div>
+    </div>
+</div>
+
     <div id="welcome-page">
         <div id="logo-container"></div>
         <div id="welcome-text" class="typing"></div>
@@ -100,6 +121,39 @@
     <img src="https://cdn-icons-png.flaticon.com/512/147/147144.png" alt="Admin" class="admin-icon" id="admin-icon">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+async function addStudent() {
+    const name = document.getElementById('new-name').value.trim();
+    const gold = parseInt(document.getElementById('new-gold').value) || 0;
+    const silver = parseInt(document.getElementById('new-silver').value) || 0;
+    const notes = document.getElementById('new-notes').value.trim();
+
+    if (!name) {
+        alert('الرجاء إدخال اسم الطالب');
+        return;
+    }
+
+    try {
+        const { error } = await supabase.from('students').insert([{
+            name,
+            gold_stars: gold,
+            silver_stars: silver,
+            notes
+        }]);
+        if (error) throw error;
+
+        alert('تمت إضافة الطالب بنجاح');
+        document.getElementById('new-name').value = '';
+        document.getElementById('new-gold').value = '';
+        document.getElementById('new-silver').value = '';
+        document.getElementById('new-notes').value = '';
+        loadResults();
+    } catch (err) {
+        console.error('Add student error:', err.message);
+        alert('حدث خطأ أثناء الإضافة: ' + err.message);
+    }
+}
+document.getElementById('add-student-btn').addEventListener('click', addStudent);
+
         // === Configuration ===
         const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc'; // استبدل بالمفتاح الجديد
