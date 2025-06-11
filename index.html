@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة النجوم</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -110,7 +111,7 @@
 
     <!-- Main Page -->
     <div id="main-page" class="container">
-        <img src="logo.glb" alt="Admin" class="admin-icon" id="admin-icon">
+        <img src="https://via.placeholder.com/30" alt="Admin" class="admin-icon" id="admin-icon">
         <h2 class="text-center mb-4">إدخال بيانات الطالب</h2>
         <form id="student-form">
             <div class="mb-3">
@@ -170,16 +171,22 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Supabase Configuration
-        const supabaseUrl = 'https://navizoyogxodbjtetwls.supabase.co'; // استبدل بـ URL الخاص بك
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc'; // استبدل بـ Anon Key الخاص بك
+        const supabaseUrl = 'https://navizoyogxodbjtetwls.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc';
         const supabase = Supabase.createClient(supabaseUrl, supabaseKey);
         const ADMIN_PASSWORD = '03072002';
 
         $(document).ready(function() {
+            // Check if jQuery is loaded
+            if (typeof $ === 'undefined') {
+                console.error('jQuery not loaded');
+                alert('فشل تحميل jQuery. تأكد من اتصال الإنترنت.');
+                return;
+            }
+            console.log('jQuery loaded successfully');
+
             // Typing animation for welcome text
             const text = 'مرحبًا بكم في نظام إدارة النجوم';
             let index = 0;
@@ -195,7 +202,7 @@
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ alpha: true });
-            renderer.setSize(300, 300); // Default size
+            renderer.setSize(300, 300);
             document.getElementById('logo-container').appendChild(renderer.domElement);
 
             // Responsive renderer size
@@ -212,22 +219,22 @@
 
             const loader = new THREE.GLTFLoader();
             loader.load(
-                'xampp/htdocs/nj/logo.glb', // استبدل برابط ملف GLB الخاص بك
+                '/logo.glb', // استبدل برابط ملف GLB العام (مثل https://your-supabase-id.supabase.co/storage/v1/object/public/logos/logo.glb)
                 function (gltf) {
                     const model = gltf.scene;
                     scene.add(model);
                     model.position.set(0, 0, 0);
-                    model.scale.set(2, 2, 2); // زيادة الحجم لضمان الظهور
+                    model.scale.set(3, 3, 3); // ضبط الحجم
                     function animate() {
                         requestAnimationFrame(animate);
-                        model.rotation.y += 0.01; // دوران النموذج
+                        model.rotation.y += 0.01;
                         renderer.render(scene, camera);
                     }
                     animate();
-                    console.log('GLB model loaded successfully.');
+                    console.log('GLB model loaded successfully');
                 },
                 function (xhr) {
-                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                    console.log('GLB loading: ' + (xhr.loaded / xhr.total * 100) + '%');
                 },
                 function (error) {
                     console.error('Error loading GLB:', error);
@@ -235,17 +242,17 @@
                 }
             );
 
-            // إعدادات الإضاءة والكاميرا
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.2);
+            // Lighting and camera setup
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
             directionalLight.position.set(5, 5, 5);
             scene.add(directionalLight);
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
             scene.add(ambientLight);
-            camera.position.set(0, 2, 5); // ضبط موقع الكاميرا
+            camera.position.set(0, 1, 5);
 
             // Handle start button click
             $('#start-button').on('click', function() {
-                console.log('Start button clicked'); // للتحقق في وحدة التحكم
+                console.log('Start button clicked');
                 $('#welcome-page').hide();
                 $('#main-page').show();
             });
