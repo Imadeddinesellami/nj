@@ -1,331 +1,201 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة النجوم</title>
-    <!-- External Libraries -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
-    <style>
-        body { font-family: 'Tajawal', sans-serif; margin: 0; background: linear-gradient(135deg, #e6f0fa, #ffffff); }
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
-        #welcome-page { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; background: url('https://www.transparenttextures.com/patterns/stardust.png'), linear-gradient(135deg, #e6f0fa, #ffffff); 
-            border-radius: 25px; box-shadow: 0 10px 30px rgba(0, 123, 255, 0.3); overflow: hidden;
-        }
-        #logo-container { 
-            width: 450px; height: 450px; margin-bottom: 50px; border: 5px solid #00aaff;
-            border-radius: 20px; overflow: hidden; position: relative; 
-        }
-        #welcome-text { font-size: 3.5rem; color: #00aaff; text-align: center; margin-bottom: 50px; font-weight: 700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); }
-        .typing { display: inline-block; white-space: nowrap; overflow: hidden; border-right: 4px solid #00aaff; animation: blink 0.75s step-end infinite; }
-        #start-button { padding: 25px 60px; font-size: 1.8rem; background-color: #00aaff; color: white; border: none; border-radius: 15px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(0, 170, 255, 0.5); }
-        #start-button:hover { background-color: #0090d0; transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0, 170, 255, 0.6); }
-        #admin-page { display: none; padding: 50px; background-color: #ffffff; border-radius: 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); margin: 20px; }
-        .admin-icon { position: fixed; top: 20px; left: 20px; cursor: pointer; width: 60px; transition: transform 0.3s; }
-        .admin-icon:hover { transform: scale(1.3); }
-        .modal-body { text-align: right; }
-        table { margin-top: 30px; background-color: #f9fbfd; border-radius: 20px; }
-        table th { background-color: #00aaff; color: white; }
-        table td { vertical-align: middle; color: #333; }
-        #search-bar { width: 100%; max-width: 300px; margin-bottom: 20px; padding: 10px; border: 2px solid #00aaff; border-radius: 10px; }
-        #export-btn { margin-top: 20px; padding: 12px 25px; background-color: #ffd700; color: #333; border: none; border-radius: 10px; cursor: pointer; }
-        #export-btn:hover { background-color: #e6c200; transform: translateY(-2px); }
-        @keyframes blink { 50% { border-color: transparent; } }
-        @media (max-width: 768px) {
-            #logo-container { width: 350px; height: 350px; }
-            #welcome-text { font-size: 2.5rem; }
-            #start-button { padding: 15px 40px; font-size: 1.5rem; }
-            #admin-page { padding: 20px; margin: 10px; }
-            .admin-icon { width: 50px; }
-        }
-        @media (max-width: 480px) {
-            #logo-container { width: 300px; height: 300px; }
-            #welcome-text { font-size: 2rem; }
-            #start-button { padding: 12px 30px; font-size: 1.2rem; }
-            .admin-icon { width: 40px; }
-            #search-bar { max-width: 200px; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>نظام إدارة النجوم</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
+  <style>
+    body { font-family: 'Tajawal', sans-serif; margin: 0; background: linear-gradient(135deg, #e6f0fa, #ffffff); }
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+    #welcome-page {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100vh; background: url('https://www.transparenttextures.com/patterns/stardust.png'), linear-gradient(135deg, #e6f0fa, #ffffff);
+      border-radius: 25px; box-shadow: 0 10px 30px rgba(0, 123, 255, 0.3); overflow: hidden;
+    }
+    #logo-container { width: 450px; height: 450px; margin-bottom: 50px; border: 5px solid #00aaff;
+      border-radius: 20px; overflow: hidden; position: relative;
+    }
+    #welcome-text { font-size: 3.5rem; color: #00aaff; text-align: center; margin-bottom: 50px; font-weight: 700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); }
+    .typing { display: inline-block; white-space: nowrap; overflow: hidden; border-right: 4px solid #00aaff; animation: blink 0.75s step-end infinite; }
+    #start-button { padding: 25px 60px; font-size: 1.8rem; background-color: #00aaff; color: white; border: none; border-radius: 15px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(0, 170, 255, 0.5); }
+    #start-button:hover { background-color: #0090d0; transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0, 170, 255, 0.6); }
+    #admin-page { display: none; padding: 50px; background-color: #ffffff; border-radius: 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); margin: 20px; }
+    .admin-icon { position: fixed; top: 20px; left: 20px; cursor: pointer; width: 60px; transition: transform 0.3s; }
+    .admin-icon:hover { transform: scale(1.3); }
+    #search-bar { width: 100%; max-width: 300px; margin-bottom: 20px; padding: 10px; border: 2px solid #00aaff; border-radius: 10px; }
+    #export-btn { margin-top: 20px; padding: 12px 25px; background-color: #ffd700; color: #333; border: none; border-radius: 10px; cursor: pointer; }
+    #export-btn:hover { background-color: #e6c200; transform: translateY(-2px); }
+    @keyframes blink { 50% { border-color: transparent; } }
+  </style>
 </head>
 <body>
-     <div id="welcome-page">
-        <div id="logo-container"></div>
-        <div id="welcome-text" class="typing"></div>
-        <button id="start-button">إبدأ الآن <i class="fas fa-play"></i></button>
-    </div>
 
-<div class="card p-4 mb-4" style="background-color: #f0faff; border-radius: 20px;">
-    <h5 class="mb-3" style="color: #0077aa;">إضافة طالب جديد <i class="fas fa-user-plus"></i></h5>
-    <div class="row g-3">
-        <div class="col-md-3">
-            <input type="text" id="new-name" class="form-control" placeholder="اسم الطالب">
-        </div>
-        <div class="col-md-2">
-            <input type="number" id="new-gold" class="form-control" placeholder="النجوم الذهبية">
-        </div>
-        <div class="col-md-2">
-            <input type="number" id="new-silver" class="form-control" placeholder="النجوم الفضية">
-        </div>
-        <div class="col-md-3">
-            <input type="text" id="new-notes" class="form-control" placeholder="ملاحظات">
-        </div>
-        <div class="col-md-2">
-            <button class="btn btn-success w-100" id="add-student-btn">حفظ <i class="fas fa-save"></i></button>
-        </div>
-    </div>
+<div id="welcome-page">
+  <div id="logo-container"></div>
+  <div id="welcome-text" class="typing"></div>
+  <button id="start-button">إبدأ الآن <i class="fas fa-play"></i></button>
 </div>
 
-   
-    
-    <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="color: #00aaff;">تسجيل دخول الأدمن <i class="fas fa-lock"></i></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>هذه الصفحة خاصة بالأدمن. الرجاء إدخال كلمة المرور:</p>
-                    <input type="password" class="form-control" id="admin-password">
-                    <div id="error-message" class="text-danger mt-2"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="submit-password">تأكيد <i class="fas fa-check"></i></button>
-                </div>
-            </div>
-        </div>
+<div id="admin-page" class="container">
+  <h2 class="text-center mb-4" style="color: #00aaff;">لوحة الإدارة <i class="fas fa-star"></i></h2>
+
+  <!-- إضافة طالب جديد -->
+  <div class="card p-4 mb-4 shadow-sm">
+    <h5 class="mb-3">إضافة طالب جديد</h5>
+    <div class="row g-3">
+      <div class="col-md-3"><input type="text" id="student-name" class="form-control" placeholder="اسم الطالب"></div>
+      <div class="col-md-2"><input type="number" id="gold-stars" class="form-control" placeholder="نجوم ذهبية"></div>
+      <div class="col-md-2"><input type="number" id="silver-stars" class="form-control" placeholder="نجوم فضية"></div>
+      <div class="col-md-3"><input type="text" id="student-notes" class="form-control" placeholder="ملاحظات"></div>
+      <div class="col-md-2"><button class="btn btn-success w-100" id="add-student">إضافة <i class="fas fa-plus"></i></button></div>
     </div>
-    <img src="https://cdn-icons-png.flaticon.com/512/147/147144.png" alt="Admin" class="admin-icon" id="admin-icon">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-async function addStudent() {
-    const name = document.getElementById('new-name').value.trim();
-    const gold = parseInt(document.getElementById('new-gold').value) || 0;
-    const silver = parseInt(document.getElementById('new-silver').value) || 0;
-    const notes = document.getElementById('new-notes').value.trim();
+  </div>
 
-    if (!name) {
-        alert('الرجاء إدخال اسم الطالب');
-        return;
+  <input type="text" id="search-bar" placeholder="ابحث باسم الطالب..." class="form-control">
+  <button id="export-btn">تصدير إلى Excel <i class="fas fa-file-export"></i></button>
+
+  <table class="table table-striped mt-4">
+    <thead>
+      <tr>
+        <th>الاسم</th>
+        <th>ذهبية</th>
+        <th>فضية</th>
+        <th>ملاحظات</th>
+        <th>الوقت</th>
+        <th>تعديل</th>
+      </tr>
+    </thead>
+    <tbody id="results-table"></tbody>
+  </table>
+</div>
+
+<img src="https://cdn-icons-png.flaticon.com/512/147/147144.png" alt="Admin" class="admin-icon" id="admin-icon">
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Typing effect
+    const text = 'مرحبًا بكم في نظام إدارة النجوم';
+    let index = 0;
+    function type() {
+      if (index < text.length) {
+        document.getElementById('welcome-text').innerText = text.slice(0, ++index);
+        setTimeout(type, 100);
+      }
+    }
+    type();
+
+    // Three.js Logo
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    const logoContainer = document.getElementById('logo-container');
+    logoContainer.appendChild(renderer.domElement);
+    const loader = new THREE.GLTFLoader();
+    loader.load('https://raw.githubusercontent.com/Imadeddinesellami/nj/main/logo.glb', function (gltf) {
+      const model = gltf.scene;
+      scene.add(model);
+      model.rotation.y = Math.PI / 4;
+      model.scale.set(5, 5, 5);
+      function animate() {
+        requestAnimationFrame(animate);
+        model.rotation.y += 0.01;
+        renderer.render(scene, camera);
+      }
+      animate();
+    });
+    scene.add(new THREE.DirectionalLight(0xffffff, 0.8));
+    scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+    camera.position.set(0, 2, 7);
+    renderer.setSize(logoContainer.clientWidth, logoContainer.clientHeight);
+    camera.aspect = logoContainer.clientWidth / logoContainer.clientHeight;
+    camera.updateProjectionMatrix();
+    window.addEventListener('resize', () => {
+      renderer.setSize(logoContainer.clientWidth, logoContainer.clientHeight);
+      camera.aspect = logoContainer.clientWidth / logoContainer.clientHeight;
+      camera.updateProjectionMatrix();
+    });
+
+    // Start
+    document.getElementById('start-button').onclick = () => {
+      document.getElementById('welcome-page').style.display = 'none';
+      document.getElementById('admin-page').style.display = 'block';
+      loadResults();
+    };
+
+    // إضافة طالب
+    document.getElementById('add-student').onclick = async () => {
+      const name = document.getElementById('student-name').value;
+      const gold = parseInt(document.getElementById('gold-stars').value) || 0;
+      const silver = parseInt(document.getElementById('silver-stars').value) || 0;
+      const notes = document.getElementById('student-notes').value;
+      if (!name) return alert('يرجى إدخال اسم الطالب');
+      const { error } = await supabase.from('students').insert([{ name, gold_stars: gold, silver_stars: silver, notes }]);
+      if (error) return alert('فشل الإضافة: ' + error.message);
+      alert('تمت الإضافة بنجاح');
+      loadResults();
+    };
+
+    // تحميل البيانات
+    async function loadResults() {
+      const { data, error } = await supabase.from('students').select('*').order('created_at', { ascending: false });
+      const tableBody = document.getElementById('results-table');
+      tableBody.innerHTML = '';
+      if (error) return alert('خطأ في تحميل البيانات: ' + error.message);
+      data.forEach(student => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${student.name}</td>
+          <td>${student.gold_stars}</td>
+          <td>${student.silver_stars}</td>
+          <td>${student.notes || ''}</td>
+          <td>${new Date(student.created_at).toLocaleString('ar-EG')}</td>
+          <td><button class="btn btn-sm btn-warning edit-btn" data-id="${student.id}">تعديل</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      // تعديل
+      document.querySelectorAll('.edit-btn').forEach(button => {
+        button.onclick = async function () {
+          const id = this.dataset.id;
+          const newName = prompt('اسم الطالب الجديد؟');
+          const newGold = prompt('عدد النجوم الذهبية؟');
+          const newSilver = prompt('عدد النجوم الفضية؟');
+          const newNotes = prompt('ملاحظات؟');
+          const { error } = await supabase.from('students').update({
+            name: newName, gold_stars: parseInt(newGold), silver_stars: parseInt(newSilver), notes: newNotes
+          }).eq('id', id);
+          if (error) alert('فشل التعديل: ' + error.message);
+          else loadResults();
+        };
+      });
     }
 
-    try {
-        const { error } = await supabase.from('students').insert([{
-            name,
-            gold_stars: gold,
-            silver_stars: silver,
-            notes
-        }]);
-        if (error) throw error;
+    // البحث
+    document.getElementById('search-bar').addEventListener('input', function () {
+      const val = this.value.toLowerCase();
+      document.querySelectorAll('#results-table tr').forEach(row => {
+        row.style.display = row.children[0].textContent.toLowerCase().includes(val) ? '' : 'none';
+      });
+    });
 
-        alert('تمت إضافة الطالب بنجاح');
-        document.getElementById('new-name').value = '';
-        document.getElementById('new-gold').value = '';
-        document.getElementById('new-silver').value = '';
-        document.getElementById('new-notes').value = '';
-        loadResults();
-    } catch (err) {
-        console.error('Add student error:', err.message);
-        alert('حدث خطأ أثناء الإضافة: ' + err.message);
-    }
-}
-document.getElementById('add-student-btn').addEventListener('click', addStudent);
-
-        // === Configuration ===
-        const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc'; // استبدل بالمفتاح الجديد
-        const ADMIN_PASSWORD = '03072002';
-        const GLB_URL = 'https://raw.githubusercontent.com/Imadeddinesellami/nj/main/logo.glb';
-
-        // === Initialize Supabase ===
-        let supabase;
-        try {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            console.log('Supabase initialized successfully with key:', SUPABASE_KEY.substring(0, 8) + '...');
-        } catch (error) {
-            console.error('Error initializing Supabase:', error.message);
-            alert('فشل تهيئة Supabase. تأكد من مفتاح API الصحيح واتصال الإنترنت.');
-        }
-
-        // === DOM Content Loaded ===
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof window.jQuery === 'undefined') {
-                console.error('jQuery not loaded');
-                alert('فشل تحميل jQuery. تأكد من اتصال الإنترنت.');
-                return;
-            }
-            console.log('jQuery loaded successfully');
-
-            // === Welcome Page Animation ===
-            const text = 'مرحبًا بكم في نظام إدارة النجوم';
-            let index = 0;
-            function type() {
-                if (index < text.length) {
-                    document.getElementById('welcome-text').innerText = text.slice(0, ++index);
-                    setTimeout(type, 100);
-                }
-            }
-            type();
-
-            // === Three.js for GLB Logo ===
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setSize(450, 450);
-            const logoContainer = document.getElementById('logo-container');
-            logoContainer.appendChild(renderer.domElement);
-
-            function updateRendererSize() {
-                const width = logoContainer.clientWidth;
-                const height = logoContainer.clientHeight;
-                renderer.setSize(width, height);
-                camera.aspect = width / height;
-                camera.updateProjectionMatrix();
-            }
-            window.addEventListener('resize', updateRendererSize);
-            updateRendererSize();
-
-            const loader = new THREE.GLTFLoader();
-            loader.load(
-                GLB_URL,
-                (gltf) => {
-                    const model = gltf.scene;
-                    scene.add(model);
-                    model.rotation.y = Math.PI / 4;
-                    model.scale.set(5, 5, 5); // زيادة الحجم لتحسين الوضوح
-                    function animate() {
-                        requestAnimationFrame(animate);
-                        model.rotation.y += 0.01;
-                        renderer.render(scene, camera);
-                    }
-                    animate();
-                    console.log('GLB model loaded successfully');
-                },
-                (xhr) => console.log('GLB loading: ' + (xhr.loaded / xhr.total * 100) + '%'),
-                (error) => {
-                    console.error('Error loading GLB:', error);
-                    alert('فشل تحميل الشعار. تأكد من الرابط: ' + GLB_URL);
-                }
-            );
-
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(5, 5, 5);
-            scene.add(directionalLight);
-            scene.add(new THREE.AmbientLight(0xffffff, 1.0));
-            camera.position.set(0, 2, 7);
-
-            // === Event Handlers ===
-            document.getElementById('start-button').addEventListener('click', function() {
-                document.getElementById('welcome-page').style.display = 'none';
-                document.getElementById('admin-page').style.display = 'block';
-            });
-
-            let adminModalInstance = null;
-            document.getElementById('admin-icon').addEventListener('click', function() {
-                if (!adminModalInstance) adminModalInstance = new bootstrap.Modal(document.getElementById('adminModal'));
-                adminModalInstance.show();
-            });
-
-            document.getElementById('submit-password').addEventListener('click', function() {
-                const password = document.getElementById('admin-password').value;
-                if (password === ADMIN_PASSWORD) {
-                    if (adminModalInstance) adminModalInstance.hide();
-                    loadResults();
-                } else document.getElementById('error-message').innerText = 'كلمة المرور غير صحيحة';
-            });
-
-            async function loadResults() {
-                try {
-                    if (!supabase) throw new Error('Supabase client not initialized');
-                    console.log('Attempting to load results from Supabase...');
-                    const { data, error } = await supabase.from('students').select('*').order('name');
-                    if (error) {
-                        console.error('Supabase error details:', error);
-                        throw new Error(`فشل تحميل البيانات: ${error.message} (رمز: ${error.code})`);
-                    }
-                    if (!data || data.length === 0) {
-                        console.log('No data found in students table');
-                        throw new Error('لا توجد بيانات في الجدول');
-                    }
-                    const tableBody = document.getElementById('results-table');
-                    tableBody.innerHTML = '';
-                    data.forEach(student => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${student.name}</td>
-                            <td>${student.gold_stars}</td>
-                            <td>${student.silver_stars}</td>
-                            <td>${student.notes || ''}</td>
-                            <td>${new Date(student.created_at).toLocaleString('ar-EG', { timeZone: 'CET' }) || ''}</td>
-                            <td><button class="btn btn-warning btn-sm edit-btn" data-id="${student.id}">تعديل <i class="fas fa-edit"></i></button></td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                    document.querySelectorAll('.edit-btn').forEach(button => {
-                        button.addEventListener('click', async function() {
-                            const id = this.getAttribute('data-id');
-                            const newName = prompt('اسم الطالب الجديد:', '');
-                            const newGold = prompt('عدد النجوم الذهبية الجديد:', '');
-                            const newSilver = prompt('عدد النجوم الفضية الجديد:', '');
-                            const newNotes = prompt('الملاحظات الجديدة:', '');
-                            if (newName || newGold !== null || newSilver !== null) {
-                                try {
-                                    const { error } = await supabase
-                                        .from('students')
-                                        .update({
-                                            name: newName || undefined,
-                                            gold_stars: parseInt(newGold) || 0,
-                                            silver_stars: parseInt(newSilver) || 0,
-                                            notes: newNotes || null
-                                        })
-                                        .eq('id', id);
-                                    if (error) throw error;
-                                    alert('تم التعديل بنجاح');
-                                    loadResults();
-                                } catch (error) {
-                                    console.error('Error editing student:', error.message);
-                                    alert('حدث خطأ أثناء التعديل: ' + error.message);
-                                }
-                            }
-                        });
-                    });
-                    console.log('Results loaded successfully, rows:', data.length);
-                } catch (error) {
-                    console.error('Error loading results:', error.message);
-                    alert(error.message);
-                }
-            }
-
-            document.getElementById('export-btn').addEventListener('click', function() {
-                const table = document.getElementById('results-table');
-                if (table) {
-                    let tableHTML = table.outerHTML;
-                    tableHTML = tableHTML.replace(/<tbody>/i, '<tbody id="export-table">');
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = tableHTML;
-                    TableToExcel.convert(tempDiv.querySelector('#export-table'), { name: 'Students Data.xlsx' });
-                } else {
-                    alert('لا يوجد جدول للتصدير');
-                }
-            });
-
-            document.getElementById('search-bar').addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                const rows = document.querySelectorAll('#results-table tr');
-                rows.forEach(row => {
-                    const name = row.cells[0].textContent.toLowerCase();
-                    row.style.display = name.includes(searchTerm) ? '' : 'none';
-                });
-            });
-        });
-    </script>
+    // تصدير
+    document.getElementById('export-btn').onclick = () => {
+      TableToExcel.convert(document.querySelector("table"), { name: "students.xlsx" });
+    };
+  });
+</script>
 </body>
 </html>
