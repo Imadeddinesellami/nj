@@ -56,6 +56,12 @@
     </style>
 </head>
 <body>
+     <div id="welcome-page">
+        <div id="logo-container"></div>
+        <div id="welcome-text" class="typing"></div>
+        <button id="start-button">إبدأ الآن <i class="fas fa-play"></i></button>
+    </div>
+
 <div class="card p-4 mb-4" style="background-color: #f0faff; border-radius: 20px;">
     <h5 class="mb-3" style="color: #0077aa;">إضافة طالب جديد <i class="fas fa-user-plus"></i></h5>
     <div class="row g-3">
@@ -77,29 +83,8 @@
     </div>
 </div>
 
-    <div id="welcome-page">
-        <div id="logo-container"></div>
-        <div id="welcome-text" class="typing"></div>
-        <button id="start-button">إبدأ الآن <i class="fas fa-play"></i></button>
-    </div>
-    <div id="admin-page" class="container">
-        <h2 class="text-center mb-5" style="color: #00aaff;">لوحة الإدارة <i class="fas fa-star"></i></h2>
-        <input type="text" id="search-bar" placeholder="ابحث باسم الطالب..." class="form-control">
-        <button id="export-btn">تصدير إلى Excel <i class="fas fa-file-export"></i></button>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>اسم الطالب <i class="fas fa-sort-alpha-down"></i></th>
-                    <th>النجوم الذهبية <i class="fas fa-star"></i></th>
-                    <th>النجوم الفضية <i class="fas fa-star-half-alt"></i></th>
-                    <th>ملاحظات <i class="fas fa-sticky-note"></i></th>
-                    <th>تاريخ/وقت <i class="fas fa-clock"></i></th>
-                    <th>تعديل <i class="fas fa-edit"></i></th>
-                </tr>
-            </thead>
-            <tbody id="results-table"></tbody>
-        </table>
-    </div>
+   
+    
     <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
