@@ -139,7 +139,7 @@
     <script>
         // === Configuration ===
         const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc'; // استبدل بالمفتاح الجديد
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc'; // Remplacez par votre clé API valide
         const ADMIN_PASSWORD = '03072002';
         const GLB_URL = 'https://raw.githubusercontent.com/Imadeddinesellami/nj/main/logo.glb';
 
@@ -147,7 +147,7 @@
         let supabase;
         try {
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            console.log('Supabase initialized successfully');
+            console.log('Supabase initialized successfully with key:', SUPABASE_KEY.substring(0, 8) + '...');
         } catch (error) {
             console.error('Error initializing Supabase:', error.message);
             alert('فشل تهيئة Supabase. تأكد من مفتاح API الصحيح واتصال الإنترنت.');
@@ -204,8 +204,8 @@
                 (gltf) => {
                     const model = gltf.scene;
                     scene.add(model);
-                    model.rotation.y = Math.PI / 4; // زاوية 45 درجة
-                    model.scale.set(4, 4, 4); // حجم أكبر
+                    model.rotation.y = Math.PI / 4;
+                    model.scale.set(4, 4, 4);
                     function animate() {
                         requestAnimationFrame(animate);
                         model.rotation.y += 0.01;
@@ -296,9 +296,17 @@
 
             async function loadResults() {
                 try {
-                    if (!supabase) throw new Error('Supabase not initialized');
+                    if (!supabase) throw new Error('Supabase client not initialized');
+                    console.log('Attempting to load results from Supabase...');
                     const { data, error } = await supabase.from('students').select('*').order('name');
-                    if (error) throw error;
+                    if (error) {
+                        console.error('Supabase error details:', error);
+                        throw new Error(`فشل تحميل البيانات: ${error.message} (رمز: ${error.code})`);
+                    }
+                    if (!data || data.length === 0) {
+                        console.log('No data found in students table');
+                        throw new Error('لا توجد بيانات في الجدول');
+                    }
                     const tableBody = document.getElementById('results-table');
                     tableBody.innerHTML = '';
                     data.forEach(student => {
@@ -341,9 +349,10 @@
                             }
                         });
                     });
+                    console.log('Results loaded successfully, rows:', data.length);
                 } catch (error) {
                     console.error('Error loading results:', error.message);
-                    alert('حدث خطأ أثناء تحميل البيانات: ' + error.message);
+                    alert(error.message);
                 }
             }
 
