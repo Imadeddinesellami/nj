@@ -175,7 +175,7 @@
     <script>
         // === Configuration ===
         const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
-        const SUPABASE_KEY = 'YOUR_NEW_API_KEY'; // استبدل هذا بالمفتاح الجديد من Supabase Dashboard
+        const SUPABASE_KEY = 'YOUR_NEW_API_KEY'; // Remplacez par le nouveau clé API de Supabase
         const ADMIN_PASSWORD = '03072002';
         const GLB_URL = 'https://raw.githubusercontent.com/Imadeddinesellami/nj/main/logo.glb';
 
@@ -269,16 +269,22 @@
             });
 
             // Admin icon
+            let adminModalInstance = null; // Variable pour stocker l'instance de la modale
             document.getElementById('admin-icon').addEventListener('click', function() {
                 console.log('Admin icon clicked');
-                new bootstrap.Modal(document.getElementById('adminModal')).show();
+                if (!adminModalInstance) {
+                    adminModalInstance = new bootstrap.Modal(document.getElementById('adminModal'));
+                }
+                adminModalInstance.show();
             });
 
             // Admin password submission
             document.getElementById('submit-password').addEventListener('click', function() {
                 const password = document.getElementById('admin-password').value;
                 if (password === ADMIN_PASSWORD) {
-                    document.getElementById('adminModal').querySelector('.modal').hide();
+                    if (adminModalInstance) {
+                        adminModalInstance.hide(); // Masquer la modale via l'instance
+                    }
                     document.getElementById('main-page').style.display = 'none';
                     document.getElementById('admin-page').style.display = 'block';
                     loadResults();
