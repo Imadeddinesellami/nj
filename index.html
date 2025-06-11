@@ -139,7 +139,7 @@
     <script>
         // === Configuration ===
         const SUPABASE_URL = 'https://navizoyogxodbjtetwls.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc'; // Remplacez par votre clé API valide
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdml6b3lvZ3hvZGJqdGV0d2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Nzk4ODMsImV4cCI6MjA2NTA1NTg4M30.LWShwRUxkpDw33RfuwYzRWrokSJLNmnxct919xUIJdc'; // استبدل بالمفتاح الجديد
         const ADMIN_PASSWORD = '03072002';
         const GLB_URL = 'https://raw.githubusercontent.com/Imadeddinesellami/nj/main/logo.glb';
 
@@ -257,7 +257,7 @@
                     gold_stars: parseInt(document.getElementById('gold-stars').value) || 0,
                     silver_stars: parseInt(document.getElementById('silver-stars').value) || 0,
                     notes: document.getElementById('notes').value || null,
-                    created_at: new Date().toLocaleString('ar-EG', { timeZone: 'CET' })
+                    created_at: new Date().toISOString() // استخدام تنسيق ISO
                 };
                 try {
                     if (!supabase) throw new Error('Supabase not initialized');
@@ -316,7 +316,7 @@
                             <td>${student.gold_stars}</td>
                             <td>${student.silver_stars}</td>
                             <td>${student.notes || ''}</td>
-                            <td>${student.created_at || ''}</td>
+                            <td>${new Date(student.created_at).toLocaleString('ar-EG', { timeZone: 'CET' }) || ''}</td>
                             <td><button class="btn btn-warning btn-sm edit-btn" data-id="${student.id}">تعديل</button></td>
                         `;
                         tableBody.appendChild(row);
